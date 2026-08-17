@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   The Wild Bee & Me — design tokens
+   Single, polished light theme. The brand is warm, natural and sunlit; a dark
+   theme would fight the honey/cream palette rather than support it, so the
+   site commits to one carefully-tuned light scheme.
+   ========================================================================== */
+
+@theme {
+  /* Honey gold — primary brand accent */
+  --color-honey-50: #fdf8ec;
+  --color-honey-100: #faefd2;
+  --color-honey-200: #f2dda4;
+  --color-honey-300: #e8c46b;
+  --color-honey-400: #dda82f;
+  --color-honey-500: #c8871b;
+  --color-honey-600: #a66c12;
+  --color-honey-700: #7f5210;
+  --color-honey-800: #5c3b0d;
+
+  /* Deep forest / sage — grounding, trustworthy */
+  --color-forest-50: #f1f5f2;
+  --color-forest-100: #dde7df;
+  --color-forest-200: #b9cdbf;
+  --color-forest-300: #8fae99;
+  --color-forest-400: #5f8570;
+  --color-forest-500: #3e6250;
+  --color-forest-600: #2c4a3b;
+  --color-forest-700: #1e3a2f;
+  --color-forest-800: #142820;
+  --color-forest-900: #0d1a15;
+
+  /* Warm neutrals */
+  --color-cream: #fdfbf5;
+  --color-sand: #f6f0e2;
+  --color-linen: #ece3d0;
+  --color-bark: #6b4a2e;
+  --color-bark-light: #8d6844;
+  --color-ink: #241c13;
+  --color-ink-muted: #5c5245;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman",
+    serif;
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.75rem;
+
+  --shadow-soft: 0 1px 2px rgb(36 28 19 / 0.04), 0 8px 24px -8px rgb(36 28 19 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(36 28 19 / 0.05), 0 24px 48px -16px rgb(36 28 19 / 0.22);
+  --shadow-glow: 0 0 0 1px rgb(200 135 27 / 0.18), 0 18px 40px -18px rgb(200 135 27 / 0.45);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor targets so the sticky header never covers a heading. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * Scroll-triggered sections start slightly offset on the X axis, which would
+   * otherwise widen the page before they animate in.
+   *
+   * This lives on a wrapper rather than html/body on purpose: overflow set on
+   * the root propagates to the viewport, and `overflow-x: clip` there kills
+   * vertical scrolling. On a wrapper it simply contains the overflow — and
+   * because `clip` (unlike `hidden`) creates no scroll container, the viewport
+   * stays the scrollport, so position: sticky keeps working.
+   */
+  .page-shell {
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, on-brand focus ring everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--color-honey-600);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-honey-200);
+    color: var(--color-ink);
+  }
+
+  /* Respect the OS "reduce motion" setting: kill transitions and scroll easing. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Honeycomb texture used behind hero and feature bands. */
+  .bg-honeycomb {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='96' viewBox='0 0 56 96'%3E%3Cpath d='M28 0l24 14v28L28 56 4 42V14z' fill='none' stroke='%23c8871b' stroke-width='1.25'/%3E%3Cpath d='M0 48l24 14v28L0 104M56 48L32 62v28l24 14' fill='none' stroke='%23c8871b' stroke-width='1.25'/%3E%3C/svg%3E");
+    background-size: 56px 96px;
+  }
+
+  .text-shadow-hero {
+    text-shadow: 0 2px 24px rgb(13 26 21 / 0.45);
+  }
+}
+
+/* Utility for the hero's slow drifting gradient. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2%, 2%, 0) scale(1.06);
+  }
+}
+
+.animate-drift {
+  animation: drift 24s var(--ease-out-soft) infinite;
+}
