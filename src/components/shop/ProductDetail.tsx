@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { BagIcon, CheckIcon, LeafIcon } from "@/components/ui/Icons";
 import { ProductArt } from "@/components/ui/ProductArt";
 import { useCart } from "@/lib/cart";
@@ -25,13 +25,36 @@ export function ProductDetail({ product }: { product: Product }) {
   // photos slot straight in via `gallery` / per-variant `image`.
   const frames = [
     { key: "hero", image: product.gallery?.[0] ?? product.image, label: product.name },
+    ...(product.gallery?.slice(1) ?? []).map((image, index) => ({
+      key: `gallery-${index}`,
+      image,
+      label: `${product.name} — view ${index + 2}`,
+    })),
     ...product.variants.map((option) => ({
       key: option.id,
       image: option.image,
       label: `${product.name} — ${option.name}`,
     })),
   ];
+
+  // Until real photography exists, every frame renders the same illustration —
+  // a row of identical thumbnails is just noise, so only show the strip once
+  // there are genuinely different images to choose between.
+  const distinctImages = new Set(frames.map((f) => f.image ?? "placeholder"));
+  const showThumbnails = distinctImages.size > 1;
+  /** Where the per-variant frames begin, after the hero and any gallery shots. */
+  const variantFrameOffset = frames.length - product.variants.length;
   const [frameIndex, setFrameIndex] = useState(0);
+  /**
+   * The first frame must paint with the server HTML — animating it in would
+   * leave the product image invisible until hydration. Only frames the visitor
+   * actively switches to get the fade.
+   */
+  const [hasSwappedFrame, setHasSwappedFrame] = useState(false);
+  const swapFrame = (next: number) => {
+    setHasSwappedFrame(true);
+    setFrameIndex(next);
+  };
   const frame = frames[frameIndex];
 
   const handleAdd = () => {
@@ -46,32 +69,40 @@ export function ProductDetail({ product }: { product: Product }) {
           widening the grid track and pushing the page sideways on mobile. */}
       <div className="min-w-0">
         <div className="overflow-hidden rounded-5xl border border-linen bg-white shadow-lift">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={frame.key}
-              initial={reduceMotion ? false : { opacity: 0, scale: 1.02 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={reduceMotion ? undefined : { opacity: 0, scale: 0.99 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <ProductArt
-                theme={product.art}
-                image={frame.image}
-                alt={frame.label}
-                priority
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="aspect-square w-full"
-              />
-            </motion.div>
-          </AnimatePresence>
+          {/*
+           * Keyed remount rather than <AnimatePresence mode="wait">: the
+           * enter/exit handoff could leave the outgoing frame stranded at
+           * opacity 0, blanking the product image after a variant switch.
+           * Changing the key remounts the node, so it always fades in fresh
+           * and there is no exit animation to stall on.
+           */}
+          <motion.div
+            key={frame.key}
+            initial={
+              reduceMotion || !hasSwappedFrame
+                ? false
+                : { opacity: 0, scale: 1.02 }
+            }
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <ProductArt
+              theme={product.art}
+              image={frame.image}
+              alt={frame.label}
+              priority
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="aspect-square w-full"
+            />
+          </motion.div>
         </div>
 
         <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-          {frames.map((thumb, index) => (
+          {(showThumbnails ? frames : []).map((thumb, index) => (
             <button
               key={thumb.key}
               type="button"
-              onClick={() => setFrameIndex(index)}
+              onClick={() => swapFrame(index)}
               aria-label={`View ${thumb.label}`}
               aria-current={index === frameIndex}
               className={cn(
@@ -123,7 +154,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   disabled={!option.inStock}
                   onClick={() => {
                     setVariantIndex(index);
-                    setFrameIndex(index + 1);
+                    swapFrame(variantFrameOffset + index);
                   }}
                   aria-pressed={selected}
                   className={cn(

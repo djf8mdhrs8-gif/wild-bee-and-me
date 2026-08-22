@@ -102,10 +102,10 @@ export default function BeeRemovalPage() {
               Humane bee removal across Southwest Florida
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-forest-100 sm:text-xl">
-              Every colony we are called to gets relocated to our farm in Alva —
-              queen, brood, comb and all. We serve Lee, Charlotte and Hendry
-              Counties seven days a week, and we do not exterminate. Not once, not
-              for the awkward jobs, not ever.
+              Every colony we&rsquo;re called out to gets relocated to our farm in
+              Alva — queen, brood, comb and all. We serve Lee, Charlotte and
+              Hendry Counties seven days a week, and we do not exterminate. Not
+              once, not for the awkward jobs, not ever.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
