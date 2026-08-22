@@ -7,7 +7,6 @@ import { BagIcon, CloseIcon } from "@/components/ui/Icons";
 import { ProductArt } from "@/components/ui/ProductArt";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/products";
 
 export function CartDrawer() {
   const { isOpen, closeCart, resolved, subtotal, itemCount, setQuantity, remove } =
@@ -28,8 +27,6 @@ export function CartDrawer() {
       document.body.style.overflow = "";
     };
   }, [isOpen, closeCart]);
-
-  const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
 
   return (
     <AnimatePresence>
@@ -91,15 +88,10 @@ export function CartDrawer() {
             ) : (
               <>
                 <div className="flex-1 overflow-y-auto px-6 py-5">
-                  {subtotal < FREE_SHIPPING_THRESHOLD ? (
-                    <p className="mb-5 rounded-2xl bg-honey-50 px-4 py-3 text-[0.85rem] text-honey-800">
-                      You&rsquo;re {formatPrice(remaining)} away from free shipping.
-                    </p>
-                  ) : (
-                    <p className="mb-5 rounded-2xl bg-forest-50 px-4 py-3 text-[0.85rem] font-medium text-forest-700">
-                      Free shipping unlocked.
-                    </p>
-                  )}
+                  <p className="mb-5 rounded-2xl bg-honey-50 px-4 py-3 text-[0.85rem] text-honey-800">
+                    Free pickup in Alva, or local delivery nearby — arranged when
+                    we confirm your order.
+                  </p>
 
                   <ul className="space-y-5">
                     {resolved.map((line) => (
@@ -178,13 +170,13 @@ export function CartDrawer() {
 
                 <div className="border-t border-linen bg-white px-6 py-5">
                   <div className="flex items-center justify-between text-[1.05rem]">
-                    <span className="font-medium text-ink-muted">Subtotal</span>
+                    <span className="font-medium text-ink-muted">Total</span>
                     <span className="font-display text-xl font-semibold text-forest-800">
                       {formatPrice(subtotal)}
                     </span>
                   </div>
                   <p className="mt-1 text-[0.8rem] text-ink-muted">
-                    Shipping and Florida sales tax calculated at checkout.
+                    Pickup or local delivery arranged at checkout.
                   </p>
                   <div className="mt-4 grid gap-2.5">
                     <Link

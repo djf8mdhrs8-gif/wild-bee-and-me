@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckIcon, MailIcon, PhoneIcon } from "@/components/ui/Icons";
+import { CheckIcon, PhoneIcon } from "@/components/ui/Icons";
 import { Container } from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
@@ -33,12 +33,12 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps) {
           ) : null}
 
           <p className="mt-6 text-[1.05rem] leading-relaxed text-ink-muted">
-            {site.owner} will email you within one business day to confirm what you
-            ordered, the final shipping cost, and a secure payment link. Nothing has
-            been charged yet.
+            {site.owner} will email you within one business day to confirm what
+            you ordered, arrange pickup or local delivery, and send a secure
+            payment link. Nothing has been charged yet.
           </p>
 
-          <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
+          <div className="mt-8 grid gap-3 text-left">
             <a
               href={site.phoneHref}
               className="flex items-center gap-3 rounded-2xl border border-linen p-4 transition-colors hover:border-honey-300 hover:bg-honey-50/50"
@@ -52,22 +52,6 @@ export default async function CheckoutSuccessPage({ searchParams }: PageProps) {
                 </span>
                 <span className="block font-semibold text-forest-800">
                   {site.phone}
-                </span>
-              </span>
-            </a>
-            <a
-              href={`mailto:${site.email}`}
-              className="flex items-center gap-3 rounded-2xl border border-linen p-4 transition-colors hover:border-honey-300 hover:bg-honey-50/50"
-            >
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-honey-100 text-honey-600">
-                <MailIcon className="h-5 w-5" />
-              </span>
-              <span>
-                <span className="block text-[0.78rem] uppercase tracking-[0.1em] text-ink-muted">
-                  Email
-                </span>
-                <span className="block truncate font-semibold text-forest-800">
-                  {site.email}
                 </span>
               </span>
             </a>

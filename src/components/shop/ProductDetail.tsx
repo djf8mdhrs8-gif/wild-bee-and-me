@@ -6,7 +6,7 @@ import { BagIcon, CheckIcon, LeafIcon } from "@/components/ui/Icons";
 import { ProductArt } from "@/components/ui/ProductArt";
 import { useCart } from "@/lib/cart";
 import { cn, formatPrice } from "@/lib/format";
-import type { Product } from "@/lib/products";
+import { LOCAL_DELIVERY_RADIUS_MILES, type Product } from "@/lib/products";
 
 /**
  * Gallery + variant picker + add-to-cart. One component so the imagery and the
@@ -260,13 +260,17 @@ export function ProductDetail({ product }: { product: Product }) {
             Ingredients
           </h2>
           <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-muted">
-            {product.ingredients.join(" · ")}
+            Made with ingredients from our farm or trusted local sources — no
+            synthetic additives and no fillers. The full list is printed on every
+            label.
           </p>
           <h2 className="mt-6 font-display text-[1.05rem] font-semibold text-forest-800">
-            Shipping
+            Getting it to you
           </h2>
           <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-muted">
-            {product.shipping}
+            Free pickup at the farm in Alva, or local delivery within{" "}
+            {LOCAL_DELIVERY_RADIUS_MILES} miles. Shipping is coming soon — join
+            the newsletter and we&rsquo;ll let you know.
           </p>
         </div>
       </div>

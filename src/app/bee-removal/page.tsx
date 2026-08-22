@@ -127,7 +127,7 @@ export default function BeeRemovalPage() {
             <ul className="mt-11 grid gap-4 sm:grid-cols-3">
               {[
                 { Icon: ClockIcon, text: "7 days a week, same-day options" },
-                { Icon: ShieldIcon, text: "Licensed & insured beekeeper" },
+                { Icon: ShieldIcon, text: "Licensed beekeeper" },
                 { Icon: MapPinIcon, text: "Lee · Charlotte · Hendry" },
               ].map((item) => (
                 <li

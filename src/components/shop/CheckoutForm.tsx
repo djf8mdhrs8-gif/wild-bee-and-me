@@ -8,28 +8,21 @@ import {
   Field,
   FormStatus,
   inputClass,
-  selectClass,
   textareaClass,
 } from "@/components/ui/Field";
 import { OrderSummary } from "@/components/shop/OrderSummary";
 import { useCart } from "@/lib/cart";
 import { site } from "@/lib/site";
-
-const US_STATES = [
-  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL",
-  "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT",
-  "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI",
-  "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "DC",
-];
+import { LOCAL_DELIVERY_RADIUS_MILES } from "@/lib/products";
 
 type Status = "idle" | "submitting" | "error";
 
 export function CheckoutForm() {
   const router = useRouter();
-  const { resolved, hydrated, subtotal, shipping, tax, total, clear } = useCart();
+  const { resolved, hydrated, subtotal, clear } = useCart();
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
-  const [fulfilment, setFulfilment] = useState<"ship" | "pickup">("ship");
+  const [fulfilment, setFulfilment] = useState<"pickup" | "delivery">("pickup");
 
   if (!hydrated) {
     return (
@@ -80,9 +73,9 @@ export function CheckoutForm() {
             variantId: line.variantId,
             quantity: line.quantity,
           })),
-          // Sent for cross-checking only — the server recomputes every total
+          // Sent for cross-checking only — the server recomputes the total
           // from the catalogue so a tampered payload cannot change the price.
-          clientTotals: { subtotal, shipping, tax, total },
+          clientTotals: { subtotal },
         }),
       });
 
@@ -152,8 +145,16 @@ export function CheckoutForm() {
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {(
               [
-                { value: "ship", title: "Ship it to me", detail: "Continental US, 2–3 business days to dispatch" },
-                { value: "pickup", title: "Local pickup", detail: `Free — collect in ${site.address.locality}, ${site.address.region}` },
+                {
+                  value: "pickup",
+                  title: "Local pickup",
+                  detail: `Free — collect from the farm in ${site.address.locality}, ${site.address.region}`,
+                },
+                {
+                  value: "delivery",
+                  title: "Local delivery",
+                  detail: `Within ${LOCAL_DELIVERY_RADIUS_MILES} miles of ${site.address.locality}`,
+                },
               ] as const
             ).map((option) => (
               <label
@@ -182,7 +183,7 @@ export function CheckoutForm() {
             ))}
           </div>
 
-          {fulfilment === "ship" ? (
+          {fulfilment === "delivery" ? (
             <div className="mt-6 grid gap-5 sm:grid-cols-6">
               <Field
                 label="Street address"
@@ -223,20 +224,16 @@ export function CheckoutForm() {
                 />
               </Field>
               <Field label="State" htmlFor="checkout-state" required className="sm:col-span-1">
-                <select
+                <input
                   id="checkout-state"
                   name="state"
+                  type="text"
                   required
+                  readOnly
                   defaultValue="FL"
-                  autoComplete="address-level1"
-                  className={selectClass()}
-                >
-                  {US_STATES.map((state) => (
-                    <option key={state} value={state}>
-                      {state}
-                    </option>
-                  ))}
-                </select>
+                  aria-describedby="state-note"
+                  className={inputClass("bg-sand text-ink-muted")}
+                />
               </Field>
               <Field label="ZIP code" htmlFor="checkout-zip" required className="sm:col-span-2">
                 <input
@@ -255,8 +252,7 @@ export function CheckoutForm() {
             <p className="mt-6 rounded-2xl bg-sand px-5 py-4 text-[0.92rem] leading-relaxed text-ink-muted">
               We will email you to arrange a pickup time at the farm in{" "}
               {site.address.locality}, {site.address.region}{" "}
-              {site.address.postalCode}. Shipping is removed from your total when
-              you collect.
+              {site.address.postalCode}. Pickup is always free.
             </p>
           )}
 
@@ -290,8 +286,9 @@ export function CheckoutForm() {
               </p>
               <p className="mt-2 text-[0.95rem] leading-relaxed text-ink-muted">
                 Place your order here and {site.owner} will email you within one
-                business day with a payment link and confirmed shipping. Nothing is
-                charged now, and your card details are never entered on this site.
+                business day with a payment link and a pickup or delivery time.
+                Nothing is charged now, and your card details are never entered on
+                this site.
               </p>
               <p className="mt-3 text-[0.85rem] text-ink-muted">
                 Prefer to pay by phone? Call {site.phone}.

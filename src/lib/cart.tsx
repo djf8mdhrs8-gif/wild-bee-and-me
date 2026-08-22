@@ -8,12 +8,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import {
-  FLAT_SHIPPING_RATE,
-  FREE_SHIPPING_THRESHOLD,
-  TAX_RATE,
-  findVariant,
-} from "@/lib/products";
+import { findVariant } from "@/lib/products";
 
 export type CartLine = {
   variantId: string;
@@ -133,10 +128,11 @@ type CartContextValue = {
   lines: CartLine[];
   resolved: ResolvedLine[];
   itemCount: number;
+  /**
+   * Goods total. There is no shipping or tax line: the farm arranges local
+   * pickup or delivery directly, so the cart total is what the goods cost.
+   */
   subtotal: number;
-  shipping: number;
-  tax: number;
-  total: number;
   /** False until the stored cart has been read, so the UI can avoid a flash. */
   hydrated: boolean;
   isOpen: boolean;
@@ -217,18 +213,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
 
     const subtotal = resolved.reduce((sum, line) => sum + line.lineTotal, 0);
-    const shipping =
-      subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_RATE;
-    const tax = Math.round(subtotal * TAX_RATE);
 
     return {
       lines,
       resolved,
       itemCount: resolved.reduce((sum, line) => sum + line.quantity, 0),
       subtotal,
-      shipping,
-      tax,
-      total: subtotal + shipping + tax,
       hydrated,
       isOpen,
       openCart,

@@ -65,7 +65,7 @@ src/
 │
 └── lib/
     ├── site.ts                 ★ Business facts: phone, address, hours, socials
-    ├── products.ts             ★ Product catalogue, prices, shipping & tax rates
+    ├── products.ts             ★ Product catalogue, prices, fulfilment
     ├── content.ts              ★ FAQs, testimonials, service area, process, values
     ├── cart.tsx                Cart store (useSyncExternalStore + localStorage)
     ├── schema.ts               JSON-LD builders (LocalBusiness, Service, Product, FAQ)
@@ -94,13 +94,12 @@ update `site.social` with the real handles.
 **`src/lib/products.ts`**. Prices are stored **in cents** (`1200` = $12.00) so
 cart maths stays exact.
 
-Also in that file:
+Also in that file: `LOCAL_DELIVERY_RADIUS_MILES = 30`.
 
-```ts
-FREE_SHIPPING_THRESHOLD = 6000   // $60.00
-FLAT_SHIPPING_RATE      = 795    // $7.95
-TAX_RATE                = 0.065  // 6.5% Florida
-```
+**Every option listed is one a customer can actually order.** The catalogue
+deliberately mirrors what the business sells today — one option per product —
+rather than padding it with sizes or scents that do not exist. Add new ones only
+when they are real.
 
 Adding a product: append to the `products` array and give it a unique `slug`.
 Its page, sitemap entry and Product schema are all generated automatically.
@@ -109,6 +108,13 @@ Its page, sitemap entry and Product schema are all generated automatically.
 
 **`src/lib/content.ts`**. The FAQ list also drives the FAQPage structured data,
 so answers added there become eligible for rich results in Google.
+
+**A note on accuracy.** The copy across this site is written to match what the
+business has actually published — the products and prices it sells, the "two to
+four hours" a removal takes, honey "never heated above 95°F", pickup and local
+delivery rather than shipping, and "licensed beekeeper" (not insured). The
+customer testimonials are reproduced as they were given. If you change a claim
+here, make sure it is one the business can stand behind.
 
 ---
 
@@ -168,25 +174,40 @@ form still reports success to the visitor.** That keeps the site deployable
 before any accounts exist — but set up email or a webhook before launch, or real
 enquiries will be lost.
 
+`NOTIFY_TO_EMAIL` is where submissions are delivered internally. It is separate
+from `site.email` in `src/lib/site.ts`, which is the address shown publicly on
+the site — that one is intentionally blank, because the business does not
+publish an email address yet. Set it and it appears in the footer, on the
+contact page and in the structured data automatically.
+
 ---
 
 ## How the shop works today
 
 The shop is **fully built** — cart state, quantities, a slide-out cart drawer, a
-full basket page, and a complete checkout form with shipping details, local
-pickup option and order notes.
+full basket page, and a complete checkout with pickup or local-delivery
+selection and order notes.
 
-**No payment processor is connected.** Checkout runs a *manual order flow*:
+**There is no shipping, and no payment processor.** Both are deliberate, and both
+match how the business actually operates today:
 
-1. Customer fills in contact and shipping details and places the order.
+- **Fulfilment** is free pickup from the farm in Alva, or local delivery within
+  30 miles. Shipping is "coming soon" — when it launches, add carrier rates in
+  `src/app/api/checkout/route.ts` and update the FAQ answer in
+  `src/lib/content.ts`.
+- **Payment** runs a *manual order flow*:
+
+1. Customer fills in contact and fulfilment details and places the order.
 2. `POST /api/checkout` **re-prices every line from the catalogue server-side**
    (a tampered payload cannot change what an order costs), assigns a short
    reference like `WB-8FK3QP`, and sends the farm an email/webhook with the full
    order breakdown.
 3. The customer lands on a confirmation page saying nothing has been charged.
-4. Ashley emails a payment link.
+4. Ashley emails a payment link and arranges pickup or delivery.
 
-No card details are ever entered on the site, so there is no PCI surface.
+No card details are ever entered on the site, so there is no PCI surface. There
+is also no sales-tax line — the order total is simply the goods, and Ashley
+confirms the final amount.
 
 ### Connecting Stripe later
 
@@ -207,10 +228,8 @@ The exact code to write is in a comment block at the top of
 6. Update the "Payment" fieldset copy in `CheckoutForm.tsx` — it currently
    explains the manual flow.
 
-Note: `TAX_RATE` is a flat Florida rate. Once you ship out of state at volume,
-switch to Stripe Tax.
-
----
+If shipping is added at the same time, use Stripe's `shipping_options` and
+Stripe Tax rather than hardcoding rates.
 
 ## Deploying to Vercel
 

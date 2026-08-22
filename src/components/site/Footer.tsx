@@ -123,15 +123,17 @@ export function Footer() {
                   </span>
                 </a>
               </li>
-              <li>
-                <a
-                  href={`mailto:${site.email}`}
-                  className="flex items-start gap-3 transition-colors hover:text-honey-300"
-                >
-                  <MailIcon className="mt-0.5 h-5 w-5 shrink-0 text-honey-400" />
-                  {site.email}
-                </a>
-              </li>
+              {site.email ? (
+                <li>
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="flex items-start gap-3 transition-colors hover:text-honey-300"
+                  >
+                    <MailIcon className="mt-0.5 h-5 w-5 shrink-0 text-honey-400" />
+                    {site.email}
+                  </a>
+                </li>
+              ) : null}
               <li className="flex items-start gap-3">
                 <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-honey-400" />
                 <span>

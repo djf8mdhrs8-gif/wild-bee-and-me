@@ -11,7 +11,7 @@ import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 export const metadata: Metadata = {
   title: "FAQ — Bee Removal, Raw Honey & Natural Products",
   description:
-    "How live bee removal works, when we operate, whether our honey is really raw, how shipping works, and what goes into our all-natural salves and tallow skin care.",
+    "How live bee removal works, when we operate, whether our honey is really raw, how pickup and local delivery work, and what goes into our all-natural salves and tallow skin care.",
   keywords: [
     "how does bee removal work",
     "is raw honey really raw",

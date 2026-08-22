@@ -6,7 +6,7 @@ const badges = [
   {
     Icon: HoneycombIcon,
     title: "Licensed Beekeeper",
-    detail: "Registered with the state and insured for structural removals.",
+    detail: "Humane bee removal by a licensed beekeeper, seven days a week.",
   },
   {
     Icon: ShieldIcon,
@@ -16,7 +16,7 @@ const badges = [
   {
     Icon: LeafIcon,
     title: "100% Natural Products",
-    detail: "Raw honey, beeswax and grass-fed tallow. Nothing synthetic.",
+    detail: "Raw honey, beeswax and grass-fed tallow. No synthetic additives.",
   },
   {
     Icon: MapPinIcon,

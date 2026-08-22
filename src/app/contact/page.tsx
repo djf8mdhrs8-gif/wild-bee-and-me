@@ -114,22 +114,42 @@ export default function ContactPage() {
                   </span>
                 </a>
 
-                <a
-                  href={`mailto:${site.email}`}
-                  className="flex items-center gap-4 rounded-4xl border border-linen bg-white p-6 shadow-soft transition-all hover:border-honey-300 hover:shadow-lift"
-                >
-                  <span className="grid h-13 w-13 shrink-0 place-items-center rounded-2xl bg-forest-50 p-3 text-forest-600">
-                    <MailIcon className="h-6 w-6" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-                      Email
+                {site.email ? (
+                  <a
+                    href={`mailto:${site.email}`}
+                    className="flex items-center gap-4 rounded-4xl border border-linen bg-white p-6 shadow-soft transition-all hover:border-honey-300 hover:shadow-lift"
+                  >
+                    <span className="grid h-13 w-13 shrink-0 place-items-center rounded-2xl bg-forest-50 p-3 text-forest-600">
+                      <MailIcon className="h-6 w-6" />
                     </span>
-                    <span className="block truncate font-display text-lg font-semibold text-forest-800">
-                      {site.email}
+                    <span className="min-w-0">
+                      <span className="block text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                        Email
+                      </span>
+                      <span className="block truncate font-display text-lg font-semibold text-forest-800">
+                        {site.email}
+                      </span>
                     </span>
-                  </span>
-                </a>
+                  </a>
+                ) : (
+                  <div className="flex items-start gap-4 rounded-4xl border border-linen bg-white p-6 shadow-soft">
+                    <span className="grid h-13 w-13 shrink-0 place-items-center rounded-2xl bg-forest-50 p-3 text-forest-600">
+                      <MailIcon className="h-6 w-6" />
+                    </span>
+                    <div>
+                      <span className="block text-[0.75rem] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                        Prefer to write?
+                      </span>
+                      <p className="mt-1 font-display text-lg font-semibold text-forest-800">
+                        Use the form
+                      </p>
+                      <p className="mt-1 text-[0.9rem] leading-relaxed text-ink-muted">
+                        It reaches us straight away, and you&rsquo;ll get a reply to
+                        the address you give.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="rounded-4xl border border-linen bg-white p-6 shadow-soft">
                   <div className="flex items-start gap-4">

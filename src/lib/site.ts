@@ -14,7 +14,17 @@ export const site = {
 
   phone: "239-600-1058",
   phoneHref: "tel:+12396001058",
-  email: "hello@thewildbeeandme.com",
+
+  /**
+   * No public email address is published yet — the business lists only a phone
+   * number. Set this once a real inbox exists and it will appear in the footer,
+   * on the contact page, on the order confirmation and in the LocalBusiness
+   * schema automatically. Leave it empty and those all fall back to the phone.
+   *
+   * NOTE: this is separate from NOTIFY_TO_EMAIL, which is where form
+   * submissions get delivered internally.
+   */
+  email: "",
 
   address: {
     locality: "Alva",

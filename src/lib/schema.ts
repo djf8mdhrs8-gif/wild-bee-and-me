@@ -21,7 +21,7 @@ export const localBusinessSchema = {
   description: site.description,
   url: siteUrl,
   telephone: site.phone,
-  email: site.email,
+  ...(site.email ? { email: site.email } : {}),
   priceRange: "$$",
   image: absoluteUrl("/opengraph-image"),
   logo: absoluteUrl("/icon.svg"),

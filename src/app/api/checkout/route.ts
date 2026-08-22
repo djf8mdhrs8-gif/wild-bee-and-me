@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { notify } from "@/lib/notify";
-import {
-  FLAT_SHIPPING_RATE,
-  FREE_SHIPPING_THRESHOLD,
-  TAX_RATE,
-  findVariant,
-} from "@/lib/products";
+import { LOCAL_DELIVERY_RADIUS_MILES, findVariant } from "@/lib/products";
 import { formatPrice } from "@/lib/format";
 import { clean, cleanMultiline, clientIp, isEmail, rateLimit } from "@/lib/validate";
 
@@ -38,13 +33,6 @@ export const runtime = "nodejs";
  *              product_data: { name: `${line.productName} — ${line.variantName}` },
  *            },
  *          })),
- *          shipping_options: shipping
- *            ? [{ shipping_rate_data: {
- *                  type: "fixed_amount",
- *                  fixed_amount: { amount: shipping, currency: "usd" },
- *                  display_name: "Standard shipping",
- *                } }]
- *            : undefined,
  *          success_url: `${origin}/checkout/success?ref={CHECKOUT_SESSION_ID}`,
  *          cancel_url: `${origin}/checkout`,
  *        });
@@ -55,8 +43,10 @@ export const runtime = "nodejs";
  *   5. Add a /api/stripe/webhook route for `checkout.session.completed` to
  *      record paid orders. See README → "Connecting Stripe later".
  *
- * Note on tax: TAX_RATE in src/lib/products.ts is a flat Florida rate. Stripe
- * Tax is the right answer once you ship out of state at volume.
+ * Note: the farm does not ship, so there is no carrier rate and no sales tax
+ * line — orders are collected in Alva or delivered locally, and the total is
+ * simply the goods. If shipping is added later, use Stripe's shipping_options
+ * and Stripe Tax rather than hardcoding rates.
  * ------------------------------------------------------------------------- */
 
 type IncomingLine = { variantId?: unknown; quantity?: unknown };
@@ -90,7 +80,7 @@ export async function POST(request: Request) {
     name: clean(rawCustomer.name, 120),
     email: clean(rawCustomer.email, 254),
     phone: clean(rawCustomer.phone, 40),
-    fulfilment: clean(rawCustomer.fulfilment, 20) === "pickup" ? "pickup" : "ship",
+    fulfilment: clean(rawCustomer.fulfilment, 20) === "delivery" ? "delivery" : "pickup",
     address1: clean(rawCustomer.address1, 200),
     address2: clean(rawCustomer.address2, 200),
     city: clean(rawCustomer.city, 100),
@@ -106,10 +96,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const isShipping = customer.fulfilment === "ship";
-  if (isShipping && (!customer.address1 || !customer.city || !customer.state || !customer.zip)) {
+  const isDelivery = customer.fulfilment === "delivery";
+  if (isDelivery && (!customer.address1 || !customer.city || !customer.zip)) {
     return NextResponse.json(
-      { error: "We need a full shipping address to post your order." },
+      { error: "We need a delivery address — street, city and ZIP." },
       { status: 400 },
     );
   }
@@ -149,23 +139,21 @@ export async function POST(request: Request) {
     );
   }
 
-  const subtotal = pricedLines.reduce((sum, line) => sum + line.lineTotal, 0);
-  const shipping =
-    !isShipping || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : FLAT_SHIPPING_RATE;
-  const tax = Math.round(subtotal * TAX_RATE);
-  const total = subtotal + shipping + tax;
+  // No shipping or tax line: pickup and local delivery are arranged directly,
+  // so the order total is exactly what the goods cost.
+  const total = pricedLines.reduce((sum, line) => sum + line.lineTotal, 0);
 
   const reference = orderReference();
 
-  const deliveryValue = isShipping
+  const deliveryValue = isDelivery
     ? [
         customer.address1,
         customer.address2,
-        `${customer.city}, ${customer.state} ${customer.zip}`,
+        `${customer.city}, ${customer.state || "FL"} ${customer.zip}`,
       ]
         .filter(Boolean)
         .join("\n")
-    : "LOCAL PICKUP — arrange a time in Alva";
+    : "LOCAL PICKUP — arrange a time at the farm in Alva";
 
   await notify({
     kind: "order",
@@ -175,7 +163,12 @@ export async function POST(request: Request) {
       { label: "Name", value: customer.name },
       { label: "Email", value: customer.email },
       { label: "Phone", value: customer.phone },
-      { label: "Fulfilment", value: isShipping ? "Ship" : "Local pickup" },
+      {
+        label: "Fulfilment",
+        value: isDelivery
+          ? `Local delivery (within ${LOCAL_DELIVERY_RADIUS_MILES} miles)`
+          : "Local pickup",
+      },
       { label: "Delivery", value: deliveryValue },
       {
         label: "Items",
@@ -188,9 +181,6 @@ export async function POST(request: Request) {
           )
           .join("\n"),
       },
-      { label: "Subtotal", value: formatPrice(subtotal) },
-      { label: "Shipping", value: shipping === 0 ? "Free" : formatPrice(shipping) },
-      { label: "Sales tax", value: formatPrice(tax) },
       { label: "TOTAL DUE", value: formatPrice(total) },
       { label: "Notes", value: customer.notes || "None" },
       {
@@ -202,6 +192,6 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     reference,
-    totals: { subtotal, shipping, tax, total },
+    totals: { total },
   });
 }

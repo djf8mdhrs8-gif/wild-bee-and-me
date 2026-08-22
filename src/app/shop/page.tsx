@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Container, Eyebrow } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { CheckIcon, LeafIcon, MapPinIcon, ShieldIcon } from "@/components/ui/Icons";
-import { products, FREE_SHIPPING_THRESHOLD } from "@/lib/products";
-import { formatPrice } from "@/lib/format";
+import { products, LOCAL_DELIVERY_RADIUS_MILES } from "@/lib/products";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Shop Raw Honey, Herbal Salves & Tallow Skin Care",
   description:
-    "Buy raw local honey, hand-poured herbal salves and grass-fed tallow skin care from More Chaos Farm in Alva, Florida. Small batches, natural ingredients, shipped nationwide.",
+    "Buy raw local honey, hand-poured herbal salves and grass-fed tallow skin care from More Chaos Farm in Alva, Florida. Small batches, natural ingredients. Free pickup in Alva or local delivery nearby.",
   keywords: [
     "raw honey Alva FL",
     "raw local honey Florida",
@@ -39,12 +37,12 @@ const promises = [
   {
     Icon: ShieldIcon,
     title: "Short ingredient lists",
-    detail: "No fillers, no petroleum, no synthetic fragrance. Printed in full.",
+    detail: "No synthetic additives, no fillers. Printed in full on every label.",
   },
   {
     Icon: MapPinIcon,
-    title: "Ships nationwide",
-    detail: `Free US shipping over ${formatPrice(FREE_SHIPPING_THRESHOLD)}. Local pickup in Alva is always free.`,
+    title: "Pickup or local delivery",
+    detail: `Free pickup in Alva, or delivery within ${LOCAL_DELIVERY_RADIUS_MILES} miles. Shipping coming soon.`,
   },
 ];
 
@@ -120,41 +118,23 @@ export default function ShopPage() {
           </div>
 
           <Reveal delay={0.12} className="mt-16">
-            <div className="grid gap-8 rounded-4xl border border-linen bg-white p-8 shadow-soft sm:p-12 lg:grid-cols-2 lg:gap-16">
-              <div>
-                <h2 className="font-display text-2xl font-semibold text-forest-800">
-                  Shipping &amp; pickup
-                </h2>
-                <ul className="mt-5 space-y-3 text-[0.98rem] leading-relaxed text-ink-muted">
-                  {[
-                    `Free shipping on US orders over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`,
-                    "Orders go out within 2–3 business days",
-                    "Honey ships double-boxed; balms ship with a heat sleeve",
-                    "Local pickup in Alva is free — just say so in your order notes",
-                  ].map((item) => (
-                    <li key={item} className="flex items-start gap-2.5">
-                      <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-honey-600" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h2 className="font-display text-2xl font-semibold text-forest-800">
-                  Wholesale &amp; farmers markets
-                </h2>
-                <p className="mt-5 text-[0.98rem] leading-relaxed text-ink-muted">
-                  Running a farm store, salon or market stall in Southwest Florida?
-                  We take on a small number of wholesale accounts each season and
-                  can label to suit. Bulk honey by the gallon is available too.
-                </p>
-                <Link
-                  href="/contact"
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-forest-700 px-6 py-3 font-semibold text-cream shadow-soft transition-all hover:bg-forest-800 hover:shadow-lift"
-                >
-                  Ask about wholesale
-                </Link>
-              </div>
+            <div className="rounded-4xl border border-linen bg-white p-8 shadow-soft sm:p-12">
+              <h2 className="font-display text-2xl font-semibold text-forest-800">
+                Pickup &amp; local delivery
+              </h2>
+              <ul className="mt-5 grid gap-3 text-[0.98rem] leading-relaxed text-ink-muted sm:grid-cols-2">
+                {[
+                  "Free pickup from the farm in Alva, FL",
+                  `Local delivery within ${LOCAL_DELIVERY_RADIUS_MILES} miles of Alva`,
+                  "We email you to arrange a time once your order is confirmed",
+                  "Shipping is coming soon — join the newsletter for updates",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-honey-600" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
         </Container>

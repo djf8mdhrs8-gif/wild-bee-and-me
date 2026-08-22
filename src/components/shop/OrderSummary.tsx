@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useCart } from "@/lib/cart";
 import { cn, formatPrice } from "@/lib/format";
-import { FREE_SHIPPING_THRESHOLD } from "@/lib/products";
+import { LOCAL_DELIVERY_RADIUS_MILES } from "@/lib/products";
 
 export function OrderSummary({
   action,
@@ -11,12 +11,12 @@ export function OrderSummary({
   className,
 }: {
   action?: ReactNode;
-  /** Render each cart line above the totals — used on the checkout page. */
+  /** Render each cart line above the total — used on the checkout page. */
   showLines?: boolean;
   /** Positioning is set by the caller so sticky wrappers never nest. */
   className?: string;
 }) {
-  const { resolved, subtotal, shipping, tax, total } = useCart();
+  const { resolved, subtotal } = useCart();
 
   return (
     <aside
@@ -47,44 +47,18 @@ export function OrderSummary({
         </ul>
       ) : null}
 
-      <dl className="mt-5 space-y-3 text-[0.95rem]">
-        <div className="flex justify-between">
-          <dt className="text-ink-muted">Subtotal</dt>
-          <dd className="font-medium text-forest-800 tabular-nums">
-            {formatPrice(subtotal)}
-          </dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-ink-muted">Shipping</dt>
-          <dd className="font-medium text-forest-800 tabular-nums">
-            {shipping === 0 ? (
-              <span className="text-forest-500">Free</span>
-            ) : (
-              formatPrice(shipping)
-            )}
-          </dd>
-        </div>
-        <div className="flex justify-between">
-          <dt className="text-ink-muted">Florida sales tax</dt>
-          <dd className="font-medium text-forest-800 tabular-nums">
-            {formatPrice(tax)}
-          </dd>
-        </div>
-      </dl>
-
       <div className="mt-5 flex items-baseline justify-between border-t border-linen pt-5">
         <span className="font-semibold text-forest-800">Total</span>
         <span className="font-display text-2xl font-semibold text-forest-800 tabular-nums">
-          {formatPrice(total)}
+          {formatPrice(subtotal)}
         </span>
       </div>
 
-      {subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD ? (
-        <p className="mt-4 rounded-2xl bg-honey-50 px-4 py-3 text-[0.82rem] text-honey-800">
-          Add {formatPrice(FREE_SHIPPING_THRESHOLD - subtotal)} more for free
-          shipping.
-        </p>
-      ) : null}
+      <p className="mt-4 rounded-2xl bg-sand px-4 py-3 text-[0.82rem] leading-relaxed text-ink-muted">
+        Free pickup in Alva, or local delivery within{" "}
+        {LOCAL_DELIVERY_RADIUS_MILES} miles. We arrange the details with you when
+        we confirm your order.
+      </p>
 
       {action ? <div className="mt-6">{action}</div> : null}
     </aside>

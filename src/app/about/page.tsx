@@ -84,45 +84,29 @@ export default function AboutPage() {
             <Reveal>
               <div className="space-y-6 text-[1.08rem] leading-[1.75] text-ink-muted">
                 <p className="font-display text-2xl leading-snug text-forest-800 sm:text-[1.75rem]">
-                  {site.owner} did not set out to run a bee removal service. She
-                  set out to keep bees.
+                  Hi, I&rsquo;m {site.owner} — and I&rsquo;m passionate about safe
+                  bee rescue, and about making natural products from what the bees
+                  give us.
                 </p>
                 <p>
-                  More Chaos Farm sits in {site.address.locality}, Florida — far
-                  enough east of Fort Myers that the traffic thins out and the
-                  citrus and palmetto take over. The name is honest. There are
-                  hives, there is a farm, and there is a healthy amount of chaos.
+                  More Chaos Farm sits in {site.address.locality}, Florida. From
+                  here I run humane bee removal across Lee, Charlotte and Hendry
+                  Counties — relocating colonies safely rather than destroying
+                  them.
                 </p>
                 <p>
-                  The removals started with a neighbour. A colony had moved into a
-                  wall, a company had quoted to spray it, and {site.owner} asked the
-                  obvious question: why kill them when they can be moved? She moved
-                  them. They settled in on the farm. They made honey.
+                  Every jar of honey, every herbal salve and every skincare product
+                  is made with love and respect for these incredible creatures.
+                  Nothing is bought in and relabelled, and nothing is bulked out
+                  with fillers.
                 </p>
                 <p>
-                  Word got around, the way it does in Southwest Florida. Now the
-                  phone rings seven days a week from across Lee, Charlotte and
-                  Hendry Counties — a swarm on a mailbox in Cape Coral, a colony in
-                  a soffit in Punta Gorda, bees in the dash of a work truck in
-                  LaBelle. Every one of them gets the same treatment: opened up
-                  carefully, comb taken out by hand, brood tied into frames, queen
-                  found, and the whole family driven home to Alva.
-                </p>
-                <p>
-                  Nothing gets sprayed. Not the difficult jobs, not the ones three
-                  storeys up, not the ones where it would be quicker. If a colony
-                  cannot be relocated alive, we do not take the job — we tell you
-                  honestly and point you somewhere useful.
-                </p>
-                <p>
-                  Those rescued colonies are the whole business. Their honey goes
-                  into the jars we bottle. Their wax goes into every salve and balm
-                  we pour. Nothing is bought in and relabelled, nothing is bulked
-                  out with filler, and the person who capped your tin is the person
-                  who answers the phone when you call.
+                  When you choose The Wild Bee &amp; Me you&rsquo;re supporting
+                  sustainable beekeeping practices, and getting the purest, most
+                  natural products straight from our farm to your family.
                 </p>
                 <p className="font-medium text-forest-800">
-                  That is the entire operation: get the bees out, keep the bees
+                  That is the whole operation: get the bees out, keep the bees
                   alive, and make something worth having from what they give back.
                 </p>
               </div>
@@ -322,7 +306,7 @@ export default function AboutPage() {
                   },
                   {
                     title: "It reaches your kitchen",
-                    detail: "Shipped or collected from the farm, made by someone whose name you know.",
+                    detail: "Collected from the farm or delivered locally, made by someone whose name you know.",
                   },
                 ].map((step, index) => (
                   <li key={step.title} className="flex gap-5">
