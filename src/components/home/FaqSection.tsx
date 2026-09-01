@@ -16,7 +16,7 @@ export function FaqSection({
         <SectionHeading
           align="center"
           eyebrow="Questions"
-          title="The things people ask before they call"
+          title="Frequently Asked Questions"
           lede="If yours is not here, ring us — you will get a person, not a script."
         />
 

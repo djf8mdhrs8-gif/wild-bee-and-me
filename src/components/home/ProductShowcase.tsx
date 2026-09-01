@@ -12,8 +12,8 @@ export function ProductShowcase() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeading
             eyebrow="From Our Hives"
-            title="What the bees give us"
-            lede="Everything on this page starts in a hive in Alva — much of it from colonies we rescued out of somebody's wall. Made in small batches, filled and labelled by hand."
+            title="Our Natural Products"
+            lede="Handcrafted with love using the finest ingredients from our farm and local sources."
           />
           <Reveal delay={0.1}>
             <Link

@@ -74,11 +74,9 @@ export default function ShopPage() {
               Everything here started in a hive
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-ink-muted">
-              Raw honey, hand-poured salves and tallow skin care — made in small
-              batches at More Chaos Farm in {site.address.locality},{" "}
-              {site.address.region}. Much of the wax and honey comes from colonies
-              we rescued from somebody&rsquo;s wall, which is a nicer origin story
-              than most shelves can offer.
+              Handcrafted with love using the finest ingredients from our farm and
+              local sources — made in small batches at More Chaos Farm in{" "}
+              {site.address.locality}, {site.address.region}.
             </p>
           </div>
 

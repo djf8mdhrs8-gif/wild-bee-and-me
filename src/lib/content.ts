@@ -176,7 +176,7 @@ export const values = [
   {
     title: "Humane treatment, always",
     detail:
-      "No colony we are called to gets exterminated. Not the awkward ones, not the ones three storeys up. Bees get relocated or we do not take the job.",
+      "Colonies are relocated safely rather than destroyed — every removal, including the awkward ones. The bees find a new home, and so do you.",
   },
   {
     title: "Sustainability that is actually local",

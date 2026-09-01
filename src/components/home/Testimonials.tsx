@@ -49,9 +49,9 @@ export function Testimonials() {
       <Container>
         <SectionHeading
           align="center"
-          eyebrow="What Neighbours Say"
-          title="Southwest Florida keeps calling back"
-          lede="Real people, real hives, real jars of honey left on the counter afterwards."
+          eyebrow="Reviews"
+          title="What Our Customers Say"
+          lede="Real people, real hives, across Lee, Charlotte and Hendry Counties."
         />
 
         <div

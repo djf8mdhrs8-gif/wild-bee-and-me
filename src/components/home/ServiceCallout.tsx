@@ -25,11 +25,10 @@ export function ServiceCallout() {
               Got bees where they shouldn&rsquo;t be?
             </h2>
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-forest-100">
-              A honey bee colony can move into a wall cavity in an afternoon and
-              build fifty pounds of comb by the end of the season. Spraying them
-              leaves that comb behind to ferment, stain and draw pests — and kills
-              a pollinator we cannot spare. We take the whole colony out alive and
-              seal the space so it does not happen again.
+              We safely relocate colonies from your home, tree, or structure — no
+              extermination. The bees find a new home, and so do you. We take the
+              whole colony out alive and seal the entry points so it does not
+              happen again.
             </p>
 
             <div className="mt-8 flex items-center gap-3 rounded-2xl border border-honey-400/25 bg-honey-500/10 px-5 py-4 backdrop-blur-sm">

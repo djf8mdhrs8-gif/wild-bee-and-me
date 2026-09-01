@@ -48,17 +48,15 @@ export function Hero() {
           <h1
             className="text-shadow-hero mt-7 text-[2.6rem] leading-[1.03] text-cream sm:text-6xl lg:text-[4.25rem]"
           >
-            Get the bees out.
-            <span className="block text-honey-300">Keep the bees alive.</span>
+            Live Bee Removals{" "}
+            <span className="block text-honey-300">&amp; Local Honey</span>
           </h1>
 
           <p
             className="mt-7 max-w-xl text-lg leading-relaxed text-forest-100 sm:text-xl"
           >
-            Humane live bee removal across Lee, Charlotte and Hendry Counties —
-            every colony relocated to our farm, never destroyed. And when the bees
-            settle in, they give us the raw honey, salves and skin care we bottle
-            by hand.
+            Raw honey, herbal salves, and skin care made with love at More Chaos
+            Farm in Alva, Florida.
           </p>
 
           <div

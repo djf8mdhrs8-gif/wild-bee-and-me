@@ -7,9 +7,9 @@ import { Reveal } from "@/components/ui/Reveal";
 import { inputClass } from "@/components/ui/Field";
 
 const perks = [
-  "First word when a honey batch is pulled",
-  "Seasonal bee-proofing tips for Florida homes",
-  "Subscriber-only bundles and farm pickup days",
+  "New products as they come off the bench",
+  "Seasonal honey harvests, announced first",
+  "Bee removal tips for Florida homes",
 ];
 
 export function Newsletter() {
@@ -64,14 +64,14 @@ export function Newsletter() {
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-honey-400/30 bg-honey-500/10 px-4 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-honey-200">
                   <BeeIcon className="h-4 w-4" />
-                  Join the Hive
+                  Newsletter
                 </span>
                 <h2 className="mt-6 text-3xl leading-[1.1] text-cream sm:text-[2.4rem]">
-                  Know when the honey is ready
+                  Join the Hive
                 </h2>
                 <p className="mt-5 max-w-md text-[1.02rem] leading-relaxed text-forest-100">
-                  Small batches sell out. One short email when there is something
-                  worth telling you about — no more than a couple a month, ever.
+                  Get updates on new products, seasonal honey harvests, and bee
+                  removal tips. No more than a couple of emails a month, ever.
                 </p>
                 <ul className="mt-7 space-y-3">
                   {perks.map((perk) => (

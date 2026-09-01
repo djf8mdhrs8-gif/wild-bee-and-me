@@ -88,26 +88,23 @@ export function AboutPreview() {
           <Reveal delay={0.1}>
             <Eyebrow>Our Story</Eyebrow>
             <h2 className="mt-4 text-3xl leading-[1.1] text-forest-800 sm:text-4xl lg:text-[2.75rem]">
-              One person, a lot of bees, and a strong opinion about spray cans
+              Meet the Wild Bee Woman
             </h2>
             <div className="mt-6 space-y-5 text-[1.05rem] leading-relaxed text-ink-muted">
               <p>
-                {site.owner} runs More Chaos Farm in Alva, Florida. She is a
-                licensed beekeeper who got into removals for a simple reason: a
-                neighbour was about to have a healthy colony exterminated, and it
-                did not have to go that way.
+                Hi, I&rsquo;m {site.owner}, and I&rsquo;m passionate about safe bee
+                rescue and creating natural products from what the bees give us. At
+                More Chaos Farm in Alva, Florida, I specialise in humane bee removal
+                that relocates colonies safely rather than destroying them.
               </p>
               <p>
-                Now she takes calls seven days a week across Lee, Charlotte and
-                Hendry Counties. Every colony she pulls out of a wall, a soffit or
-                a fallen oak comes home to the farm, gets set up in a proper hive,
-                and gets watched until it is thriving.
+                Every jar of honey, every herbal salve and every skincare product is
+                made with love and respect for these incredible creatures.
               </p>
               <p>
-                Those same bees make the honey we bottle and the wax that goes into
-                every salve and balm. Nothing is outsourced, nothing is bulked out
-                with fillers, and the person who made your jar is the person who
-                answers the phone.
+                When you choose The Wild Bee &amp; Me you&rsquo;re supporting
+                sustainable beekeeping practices, and getting the purest, most
+                natural products straight from our farm to your family.
               </p>
             </div>
 

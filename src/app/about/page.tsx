@@ -66,12 +66,11 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             <Eyebrow className="text-honey-300">Our Story</Eyebrow>
             <h1 className="text-shadow-hero mt-5 text-[2.5rem] leading-[1.05] text-cream sm:text-5xl lg:text-[3.75rem]">
-              A farm in Alva, a lot of rescued bees, and one firm rule
+              Meet the Wild Bee Woman
             </h1>
             <p className="mt-7 text-lg leading-relaxed text-forest-100 sm:text-xl">
-              The rule is simple: the colony comes out alive. Everything else about
-              The Wild Bee &amp; Me — the honey, the salves, the balm — grows out
-              of keeping it.
+              Humane bee removal and natural farm products, made with love in
+              Alva, Florida.
             </p>
           </div>
         </Container>
