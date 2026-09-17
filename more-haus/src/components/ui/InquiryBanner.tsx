@@ -20,11 +20,11 @@ export function InquiryBanner({
   return (
     <section className="grain relative bg-charcoal text-ivory">
       <div className="wrap relative z-10 py-[clamp(5rem,12vw,10rem)]">
-        <div className="grid gap-x-10 gap-y-10 lg:grid-cols-12">
-          <Reveal className="lg:col-span-7">
+        <div className="grid gap-x-10 gap-y-10 md:grid-cols-12">
+          <Reveal className="md:col-span-7">
             <h2 className="display-md max-w-[18ch] text-balance">{heading}</h2>
           </Reveal>
-          <Reveal className="lg:col-span-4 lg:col-start-9" delay={0.08}>
+          <Reveal className="md:col-span-4 md:col-start-9" delay={0.08}>
             <p className="body-lg text-parchment/85">{body}</p>
             <Link href={href} className="btn btn-invert mt-10">
               {cta}

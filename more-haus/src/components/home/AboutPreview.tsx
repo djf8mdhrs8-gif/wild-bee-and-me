@@ -11,8 +11,8 @@ import { about } from "@/lib/content";
 export function AboutPreview() {
   return (
     <section className="wrap py-[clamp(5rem,13vw,11rem)]" aria-labelledby="about-preview">
-      <div className="grid items-center gap-[clamp(2.5rem,6vw,5rem)] lg:grid-cols-12">
-        <Reveal className="lg:col-span-5" distance={34}>
+      <div className="grid items-center gap-[clamp(2.5rem,6vw,5rem)] md:grid-cols-12">
+        <Reveal className="md:col-span-5" distance={34}>
           <div className="frame aspect-[4/5]">
             <EditorialImage
               media={about.portrait}
@@ -21,7 +21,7 @@ export function AboutPreview() {
           </div>
         </Reveal>
 
-        <div className="lg:col-span-6 lg:col-start-7">
+        <div className="md:col-span-6 md:col-start-7">
           <Reveal delay={0.08}>
             <Eyebrow>Meet the Designer</Eyebrow>
           </Reveal>

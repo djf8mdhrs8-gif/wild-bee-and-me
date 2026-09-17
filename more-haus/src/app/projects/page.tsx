@@ -19,52 +19,52 @@ export const metadata: Metadata = {
  */
 const LAYOUT = [
   {
-    span: "lg:col-span-7",
+    span: "md:col-span-7",
     start: "",
     aspect: "aspect-[4/3]",
     offset: "",
     scale: "lg" as const,
-    sizes: "(min-width: 1024px) 58vw, 100vw",
+    sizes: "(min-width: 1024px) 58vw, (min-width: 768px) 58vw, 100vw",
   },
   {
-    span: "lg:col-span-4",
-    start: "lg:col-start-9",
+    span: "md:col-span-4 md:col-start-9",
+    start: "",
     aspect: "aspect-[3/4]",
-    offset: "lg:mt-[9vw]",
+    offset: "md:mt-[7vw] lg:mt-[9vw]",
     scale: "sm" as const,
-    sizes: "(min-width: 1024px) 32vw, 100vw",
+    sizes: "(min-width: 768px) 32vw, 100vw",
   },
   {
-    span: "lg:col-span-5",
-    start: "lg:col-start-2",
+    span: "md:col-span-5 md:col-start-2",
+    start: "",
     aspect: "aspect-[4/5]",
     offset: "",
     scale: "md" as const,
-    sizes: "(min-width: 1024px) 40vw, 100vw",
+    sizes: "(min-width: 768px) 40vw, 100vw",
   },
   {
-    span: "lg:col-span-5",
-    start: "lg:col-start-8",
+    span: "md:col-span-5 md:col-start-8",
+    start: "",
     aspect: "aspect-[5/4]",
-    offset: "lg:mt-[7vw]",
+    offset: "md:mt-[6vw] lg:mt-[7vw]",
     scale: "md" as const,
-    sizes: "(min-width: 1024px) 40vw, 100vw",
+    sizes: "(min-width: 768px) 40vw, 100vw",
   },
   {
-    span: "lg:col-span-9",
-    start: "lg:col-start-3",
+    span: "md:col-span-9 md:col-start-3",
+    start: "",
     aspect: "aspect-[16/9]",
     offset: "",
     scale: "lg" as const,
-    sizes: "(min-width: 1024px) 74vw, 100vw",
+    sizes: "(min-width: 768px) 74vw, 100vw",
   },
   {
-    span: "lg:col-span-4",
+    span: "md:col-span-4",
     start: "",
     aspect: "aspect-[3/4]",
-    offset: "lg:mt-[4vw]",
+    offset: "md:mt-[4vw]",
     scale: "sm" as const,
-    sizes: "(min-width: 1024px) 32vw, 100vw",
+    sizes: "(min-width: 768px) 32vw, 100vw",
   },
 ];
 
@@ -93,7 +93,7 @@ export default function ProjectsPage() {
         </div>
       ) : (
         <div className="wrap pb-[clamp(6rem,14vw,12rem)]">
-          <div className="grid items-start gap-x-8 gap-y-[clamp(3.5rem,8vw,7rem)] lg:grid-cols-12">
+          <div className="grid items-start gap-x-8 gap-y-[clamp(3.5rem,8vw,7rem)] md:grid-cols-12">
             {projects.map((project, index) => {
               const layout = LAYOUT[index % LAYOUT.length];
               return (

@@ -182,6 +182,23 @@ opacity with no offset so nothing can be stranded invisible.
 | 8 | Journal | Parchment | Loose 12-column grid, per-slot spans and offsets, gaps left in |
 | 9 | Footer | Espresso | Wordmark at display size, four columns, newsletter on a rule |
 
+**Tablet (768–1023px)**
+
+The compositions have their own tier rather than falling back to the phone
+stack — a full-width portrait at 834px is over 1100px tall, which is the
+"shrunk desktop" failure in reverse. Between `md` and `lg` the grid is still
+12 columns, with simpler spans and shallower offsets than desktop:
+
+| | Desktop (`lg`) | Tablet (`md`) |
+| --- | --- | --- |
+| Featured lead / offset | 8 wide, portrait 3 wide at col 10, dropped 9vw | 8 wide, portrait 4 wide at col 9, dropped 6vw |
+| Featured pair | 5 wide + 6 wide dropped 7vw | 5 wide + 6 wide dropped 5vw |
+| Collection grid | 3 columns | 3 columns |
+| Services | Image 5 / text 6, alternating | Same, alternating |
+
+Navigation stays the full-screen menu below `lg`: six letterspaced items plus
+the logo and Inquire do not sit comfortably at 834px.
+
 **Mobile (not a shrunk desktop)**
 
 - Hero keeps full height; the headline drops to ~3rem and the right-hand

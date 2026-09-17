@@ -14,8 +14,8 @@ export function Footer() {
   return (
     <footer className="grain relative bg-espresso text-ivory">
       <div className="wrap relative z-10 pt-[clamp(4rem,10vw,9rem)] pb-12">
-        <div className="grid gap-[clamp(3rem,6vw,5rem)] lg:grid-cols-12">
-          <div className="lg:col-span-5">
+        <div className="grid gap-[clamp(3rem,6vw,5rem)] md:grid-cols-12">
+          <div className="md:col-span-5">
             <Wordmark onDark size="lg" />
             <p className="lede mt-8 max-w-sm text-parchment/85">
               {site.tagline}
@@ -23,7 +23,7 @@ export function Footer() {
             <p className="label mt-8 text-parchment/60">{site.locationLine}</p>
           </div>
 
-          <nav aria-label="Footer" className="lg:col-span-3 lg:col-start-7">
+          <nav aria-label="Footer" className="md:col-span-3 md:col-start-7">
             <h2 className="label text-parchment/60">Explore</h2>
             <ul className="mt-6 space-y-3">
               {navigation.map((item) => (
@@ -39,7 +39,7 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="lg:col-span-3">
+          <div className="md:col-span-3">
             <h2 className="label text-parchment/60">Elsewhere</h2>
             <ul className="mt-6 space-y-3">
               {site.social.map((channel) => (
@@ -67,8 +67,8 @@ export function Footer() {
         </div>
 
         <div className="rule-light mt-[clamp(3.5rem,8vw,6rem)] pt-10">
-          <div className="grid gap-10 lg:grid-cols-12">
-            <div className="lg:col-span-6">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-6">
               <NewsletterForm
                 source="footer"
                 label="Letters from the studio — new pieces, project notes and Home Edit dates."
@@ -76,7 +76,7 @@ export function Footer() {
               />
             </div>
 
-            <div className="flex items-end lg:col-span-5 lg:col-start-8">
+            <div className="flex items-end md:col-span-5 md:col-start-8">
               <p className="label-sm text-parchment/50">
                 &copy; {year} {site.name}. All rights reserved.
               </p>

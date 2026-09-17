@@ -51,8 +51,8 @@ export function HomeEditFeature() {
         {next ? (
           <Reveal delay={0.14}>
             <div className="mt-[clamp(3rem,8vw,6rem)] border-t border-espresso/25 pt-10">
-              <div className="grid gap-x-10 gap-y-8 lg:grid-cols-12">
-                <div className="lg:col-span-6">
+              <div className="grid gap-x-10 gap-y-8 md:grid-cols-12">
+                <div className="md:col-span-6">
                   <p className="label text-espresso/70">The next edit</p>
                   <div className="mt-6 flex items-start gap-8">
                     <EditDateStack event={next} size="lg" />
@@ -79,7 +79,7 @@ export function HomeEditFeature() {
                   <AddToCalendar event={next} className="mt-8" />
                 </div>
 
-                <div className="lg:col-span-5 lg:col-start-8">
+                <div className="md:col-span-5 md:col-start-8">
                   {following.length > 0 ? (
                     <>
                       <p className="label text-espresso/70">Also on the calendar</p>

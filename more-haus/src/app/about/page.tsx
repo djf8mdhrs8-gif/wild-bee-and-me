@@ -51,8 +51,8 @@ export default function AboutPage() {
 
       {/* Portrait and biography */}
       <section className="wrap py-[clamp(5rem,12vw,10rem)]" aria-labelledby="biography">
-        <div className="grid items-start gap-x-12 gap-y-12 lg:grid-cols-12">
-          <Reveal className="lg:col-span-5" distance={30}>
+        <div className="grid items-start gap-x-12 gap-y-12 md:grid-cols-12">
+          <Reveal className="md:col-span-5" distance={30}>
             <div className="frame aspect-[4/5]">
               <EditorialImage
                 media={about.portrait}
@@ -68,7 +68,7 @@ export default function AboutPage() {
             </p>
           </Reveal>
 
-          <div className="lg:col-span-6 lg:col-start-7 lg:pt-[4vw]">
+          <div className="md:col-span-6 md:col-start-7 lg:pt-[4vw]">
             <Reveal>
               <Eyebrow>Meet the Designer</Eyebrow>
             </Reveal>

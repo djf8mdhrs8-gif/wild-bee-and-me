@@ -72,8 +72,8 @@ export default async function ProjectPage({ params }: Params) {
 
       {/* Facts, then the story in a single narrow column. */}
       <div className="wrap py-[clamp(4rem,10vw,8rem)]">
-        <div className="grid gap-x-10 gap-y-12 lg:grid-cols-12">
-          <Reveal className="lg:col-span-3">
+        <div className="grid gap-x-10 gap-y-12 md:grid-cols-12">
+          <Reveal className="md:col-span-3">
             <dl className="space-y-6">
               <div>
                 <dt className="label text-smoke">Location</dt>
@@ -92,7 +92,7 @@ export default async function ProjectPage({ params }: Params) {
             </dl>
           </Reveal>
 
-          <div className="lg:col-span-7 lg:col-start-5">
+          <div className="md:col-span-8 md:col-start-5">
             <Reveal delay={0.08}>
               <p className="display-sm max-w-[26ch] text-balance">{project.summary}</p>
             </Reveal>

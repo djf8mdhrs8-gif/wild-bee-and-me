@@ -27,13 +27,13 @@ export function PageHeader({
     >
       <Eyebrow>{eyebrow}</Eyebrow>
 
-      <div className="mt-8 grid gap-x-10 gap-y-8 lg:grid-cols-12">
-        <h1 className="display-lg max-w-[16ch] text-balance lg:col-span-7">
+      <div className="mt-8 grid gap-x-10 gap-y-8 md:grid-cols-12">
+        <h1 className="display-lg max-w-[16ch] text-balance md:col-span-7">
           {title}
         </h1>
 
         {lede ? (
-          <div className="flex items-end lg:col-span-4 lg:col-start-9">
+          <div className="flex items-end md:col-span-4 md:col-start-9">
             <p className="body-lg text-smoke">{lede}</p>
           </div>
         ) : null}

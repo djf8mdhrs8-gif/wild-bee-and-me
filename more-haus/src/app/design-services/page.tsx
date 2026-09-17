@@ -38,12 +38,12 @@ export default function DesignServicesPage() {
             <section
               key={service.slug}
               aria-labelledby={service.slug}
-              className="rule grid items-start gap-x-12 gap-y-10 py-[clamp(3.5rem,8vw,6.5rem)] lg:grid-cols-12"
+              className="rule grid items-start gap-x-12 gap-y-10 py-[clamp(3.5rem,8vw,6.5rem)] md:grid-cols-12"
             >
               <Reveal
                 className={cn(
-                  "lg:col-span-5",
-                  imageFirst ? "lg:order-1" : "lg:order-2 lg:col-start-8",
+                  "md:col-span-5",
+                  imageFirst ? "md:order-1" : "md:order-2 md:col-start-8",
                 )}
                 distance={30}
               >
@@ -57,8 +57,8 @@ export default function DesignServicesPage() {
 
               <div
                 className={cn(
-                  "lg:col-span-6",
-                  imageFirst ? "lg:order-2 lg:col-start-7" : "lg:order-1 lg:col-start-1",
+                  "md:col-span-6",
+                  imageFirst ? "md:order-2 md:col-start-7" : "md:order-1 md:col-start-1",
                 )}
               >
                 <Reveal delay={0.06}>

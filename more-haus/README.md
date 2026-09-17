@@ -182,7 +182,7 @@ Both pages adapt to whatever is in them.
 
 ## What has been checked
 
-Verified in a real browser against a production build, at 1440px and 390px:
+Verified in a real browser against a production build, at 1440px, 834px and 390px:
 
 - Build, TypeScript and ESLint all clean.
 - Collection filtering, hide-sold, and the empty state.
@@ -196,6 +196,9 @@ Verified in a real browser against a production build, at 1440px and 390px:
   form controls, no images without alt text, and a description and OG title.
 - First tab stop is the skip link.
 - Under `prefers-reduced-motion: reduce`, no content is left hidden.
+- Tablet has its own layout tier rather than the phone stack: at 834px the
+  projects index is 2618px tall rather than 5896px, and the collection is
+  three across.
 
 Not yet possible to check: anything depending on the real logo, real
 photography or a live form endpoint.

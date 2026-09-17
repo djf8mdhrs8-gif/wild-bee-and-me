@@ -38,9 +38,9 @@ export function FeaturedProjects() {
         </Reveal>
 
         {/* Lead image with a portrait dropped alongside and below it. */}
-        <div className="grid gap-x-8 gap-y-[clamp(3rem,7vw,5rem)] lg:grid-cols-12">
+        <div className="grid gap-x-8 gap-y-[clamp(3rem,7vw,5rem)] md:grid-cols-12">
           {lead ? (
-            <Reveal className="lg:col-span-8" distance={36}>
+            <Reveal className="md:col-span-8" distance={36}>
               <ProjectTile
                 project={lead}
                 index={0}
@@ -53,7 +53,7 @@ export function FeaturedProjects() {
 
           {offset ? (
             <Reveal
-              className="lg:col-span-3 lg:col-start-10 lg:mt-[9vw]"
+              className="md:col-span-4 md:col-start-9 md:mt-[6vw] lg:col-span-3 lg:col-start-10 lg:mt-[9vw]"
               delay={0.1}
               distance={36}
             >
@@ -100,9 +100,9 @@ export function FeaturedProjects() {
       {/* A two-image composition, the second dropped out of alignment. */}
       {(pairOne || pairTwo) && (
         <div className="wrap mt-[clamp(4rem,10vw,8rem)]">
-          <div className="grid gap-x-8 gap-y-[clamp(3rem,7vw,5rem)] lg:grid-cols-12">
+          <div className="grid gap-x-8 gap-y-[clamp(3rem,7vw,5rem)] md:grid-cols-12">
             {pairOne ? (
-              <Reveal className="lg:col-span-5" distance={36}>
+              <Reveal className="md:col-span-5" distance={36}>
                 <ProjectTile
                   project={pairOne}
                   index={3}
@@ -114,7 +114,7 @@ export function FeaturedProjects() {
 
             {pairTwo ? (
               <Reveal
-                className="lg:col-span-6 lg:col-start-7 lg:mt-[7vw]"
+                className="md:col-span-6 md:col-start-7 md:mt-[5vw] lg:mt-[7vw]"
                 delay={0.1}
                 distance={36}
               >

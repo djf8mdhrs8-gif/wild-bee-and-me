@@ -121,7 +121,7 @@ export function CollectionBrowser({
             <p className="sr-only" role="status">
               {visible.length} pieces shown
             </p>
-            <div className="grid grid-cols-2 items-start gap-x-4 gap-y-[clamp(2.5rem,5vw,4rem)] sm:gap-x-8 lg:grid-cols-3 lg:gap-x-10">
+            <div className="grid grid-cols-2 items-start gap-x-4 gap-y-[clamp(2.5rem,5vw,4rem)] sm:gap-x-8 md:grid-cols-3 lg:gap-x-10">
               {visible.map((product, index) => (
                 <ProductCard
                   key={product.slug}
