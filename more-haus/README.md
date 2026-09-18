@@ -106,38 +106,38 @@ WebP automatically. Upload the largest version you have — around 2400px on the
 long edge is plenty — and let it do the work. If photography ever moves to a
 CDN, add the hostname to `images.remotePatterns` in `next.config.ts`.
 
-### 4. Where the forms send — environment variables
+### 4. Make the forms reach you — environment variables
 
-**Until these are set, inquiries and signups are written to the server log and
-reach nobody.** Copy `.env.example` to `.env.local` for development, and set
-the same variables on the host for production.
+**Until this is done the contact form and the newsletter signup are written to
+the server log and reach nobody.** Copy `.env.example` to `.env.local` for
+development and set the same values on the host for production.
 
-| Variable | What it does |
-| --- | --- |
-| `INQUIRY_WEBHOOK_URL` | Every contact-form submission is POSTed here as JSON |
-| `NEWSLETTER_WEBHOOK_URL` | Every newsletter signup is POSTed here as JSON |
+**The quick way — email.** Make an account at [resend.com](https://resend.com),
+create an API key, and set two values:
 
-Either can point at a form service (Formspark, Basin), an email relay (Resend,
-Postmark), an automation hook (Zapier, Make), a mailing list provider
-(Flodesk, Mailchimp, Klaviyo) or a CRM. The API responses include
-`delivered: true | false` so a misconfiguration is visible rather than silent.
+```bash
+RESEND_API_KEY=re_xxxxxxxxxxxx
+INQUIRY_TO_EMAIL=you@yourdomain.com
+```
 
-**Both endpoints turn away automated submissions before anything is
-forwarded**, which matters because a public contact form collects spam from the
-day it goes live:
+That is the whole setup. Every inquiry arrives as an email laid out in the
+brand palette, with **reply-to set to the person who wrote in** — so answering
+is just hitting reply. Newsletter signups arrive the same way.
 
-- A **honeypot field** no person can see or tab to. Anything that fills it in
-  is not a person.
-- A **timing check** — a submission arriving within three seconds of the form
-  loading did not involve reading it.
-- Only the **fields the form defines** are relayed onward, each capped in
-  length, and a body over 16 KB is refused outright. Nothing unexpected reaches
-  whatever service is on the other end of the webhook.
+Until you verify a domain with Resend, mail is sent from their shared address,
+which works straight away. Once `morehaus.com` is verified, set
+`INQUIRY_FROM_EMAIL="MORE HAUS <studio@morehaus.com>"` so it comes from you.
 
-Automated submissions get exactly the same reply as a real one and are simply
-not forwarded — telling a spammer why it failed only tells them what to change.
-If you ever wonder why a submission did not arrive, `delivered: false` in the
-server log is the thing to look for.
+**The other way — send it somewhere else.** Leave `RESEND_API_KEY` empty and
+set `INQUIRY_WEBHOOK_URL` and `NEWSLETTER_WEBHOOK_URL` instead. Each submission
+is POSTed as JSON to a form service, an automation hook, a CRM or a mailing
+list provider.
+
+**If delivery fails**, the visitor still gets a normal thank-you — they did
+nothing wrong — and the complete submission is written to the server log
+prefixed `[inquiry] NOT DELIVERED` with the reason, so nothing is ever lost
+without a trace. The API response carries `delivered: true | false`, so a
+misconfiguration is visible rather than silent.
 
 ### 5. Replace the placeholder copy
 
@@ -286,6 +286,12 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
 - Category counts match what the grid shows once sold pieces are hidden.
 - The page stays locked while the mobile menu fades out, and scrolls again once
   it has gone.
+- Email delivery end to end against a stand-in provider: a full inquiry arrives
+  with every field, the chosen subject shown as its label, and reply-to set to
+  the sender. When the provider is unreachable the visitor still sees a normal
+  thank-you and the whole submission is written to the log.
+- A clean `git clone` of this branch runs `npm ci` and `next build` with no
+  further setup.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.

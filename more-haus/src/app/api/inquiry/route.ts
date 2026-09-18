@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { deliverInquiry } from "@/lib/deliver";
 import {
   looksAutomated,
   MAX_BODY_BYTES,
@@ -8,17 +9,19 @@ import {
 } from "@/lib/inquiry";
 
 /**
- * Receives a design inquiry.
+ * Receives a design inquiry and hands it to the delivery layer.
  *
  * ┌──────────────────────────────────────────────────────────────────────────┐
- * │  BEFORE LAUNCH: set INQUIRY_WEBHOOK_URL.                                 │
+ * │  BEFORE LAUNCH: make submissions reach a person.                         │
  * │                                                                          │
- * │  With it set, every inquiry is POSTed there as JSON — point it at a form │
- * │  service, an email relay, a Zapier/Make hook, or a CRM.                  │
+ * │  Simplest: set RESEND_API_KEY and INQUIRY_TO_EMAIL and every inquiry is  │
+ * │  emailed to the studio, with reply-to set to whoever wrote in.           │
  * │                                                                          │
- * │  Without it, inquiries are written to the server log ONLY. That is        │
- * │  useful in development and is NOT good enough for a live site: a real     │
- * │  enquiry would be recorded and never reach anyone.                       │
+ * │  Or set INQUIRY_WEBHOOK_URL to POST it as JSON to a form service, an     │
+ * │  automation hook or a CRM instead.                                       │
+ * │                                                                          │
+ * │  With neither, inquiries are written to the server log ONLY. Useful in   │
+ * │  development, and NOT good enough for a live site.                       │
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 /** Answered for real submissions and for automated ones alike. */
@@ -72,38 +75,20 @@ export async function POST(request: Request) {
     );
   }
 
-  const webhook = process.env.INQUIRY_WEBHOOK_URL;
+  const result = await deliverInquiry(payload).catch((error) => ({
+    delivered: false,
+    reason: String(error),
+  }));
 
-  if (!webhook) {
-    console.warn(
-      "[inquiry] INQUIRY_WEBHOOK_URL is not set — this inquiry was logged and NOT delivered.",
-      { ...payload, receivedAt: new Date().toISOString() },
-    );
-    return NextResponse.json({ message: ACCEPTED, delivered: false });
-  }
-
-  try {
-    const response = await fetch(webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "inquiry",
-        receivedAt: new Date().toISOString(),
-        ...payload,
-      }),
-    });
-
-    if (!response.ok) throw new Error(`Webhook responded ${response.status}`);
-  } catch (error) {
-    console.error("[inquiry] delivery failed", error, payload);
-    return NextResponse.json(
-      {
-        message:
-          "That did not send. Please try again, or email the studio directly.",
-      },
-      { status: 502 },
+  if (!result.delivered) {
+    // Loud in the log, quiet to the visitor: they did nothing wrong, and the
+    // studio needs to be able to find the inquiry and the reason.
+    console.error(
+      "[inquiry] NOT DELIVERED —",
+      result.reason,
+      JSON.stringify({ ...payload, receivedAt: new Date().toISOString() }),
     );
   }
 
-  return NextResponse.json({ message: ACCEPTED, delivered: true });
+  return NextResponse.json({ message: ACCEPTED, delivered: result.delivered });
 }
