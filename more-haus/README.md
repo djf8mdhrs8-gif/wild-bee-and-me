@@ -164,6 +164,18 @@ can add a year at once. **Past dates move themselves into the archive** —
 nothing to delete, nothing to reorder. Every listed date gets a working "add to
 calendar" for Google, Apple and Outlook automatically.
 
+Three behaviours worth knowing, each of them tested by moving the dates around
+and rebuilding:
+
+- **An edit stays "next" all through its own day**, so someone checking their
+  phone on the morning of the market still sees it, with directions and hours.
+  It moves to the archive overnight.
+- **If you run out of dates**, nothing breaks and nothing looks empty: the
+  homepage and the Home Edit page both say the next date is being set and show
+  the email signup instead. The upcoming schedule section hides itself and the
+  search-engine event listing is withdrawn.
+- **The archive builds itself** from dates that have passed, newest first.
+
 ### Add a project
 
 `src/content/projects.ts`. The case study page, the portfolio layout and the
@@ -195,7 +207,17 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
 - Every page has exactly one `<h1>`, no skipped heading levels, no unlabelled
   form controls, no images without alt text, and a description and OG title.
 - First tab stop is the skip link.
-- Under `prefers-reduced-motion: reduce`, no content is left hidden.
+- Under `prefers-reduced-motion: reduce`, no content is left hidden; parallax
+  stays still and reveals stay visible.
+- Home Edit date handling, by moving the dates and rebuilding: an edit on
+  today's date still shows as next, yesterday's has already moved to the
+  archive, and a schedule with nothing left falls back gracefully everywhere.
+- Product gallery: thumbnails swap the main plate, work from the keyboard, are
+  marked with `aria-current`, and are not rendered at all for a piece with one
+  photograph. Sold pieces offer "ask for something similar" rather than a buy
+  button.
+- The mobile menu opens, staggers, traps focus, reopens correctly after
+  closing, and unmounts only once its exit transition has finished.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.
