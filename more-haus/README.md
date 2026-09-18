@@ -200,6 +200,26 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.
 
+Measured on a throttled phone (4× CPU slowdown, 4G, 390px viewport), which is
+roughly what Instagram traffic looks like:
+
+| Page | LCP | CLS | JS transferred |
+| --- | --- | --- | --- |
+| Home | 812ms | 0 | 145 KB |
+| The Collection | 668ms | 0 | 150 KB |
+| Project case study | 628ms | 0 | 145 KB |
+| The Home Edit | 644ms | 0 | 145 KB |
+
+Google's "good" threshold is 2500ms for LCP and 0.1 for CLS. LCP and FCP are
+the same number on every page, which is the CSS-rather-than-JavaScript hero
+entrance doing its job — the headline paints with the document instead of
+waiting for hydration. CLS is zero because every image sits in a frame with a
+declared aspect ratio, so nothing reflows as photography loads.
+
+These numbers are from placeholder artwork. Real photography will add weight;
+`next/image` will resize and serve AVIF/WebP, but keep an eye on LCP once the
+hero image is real.
+
 Not yet possible to check: anything depending on the real logo, real
 photography or a live form endpoint.
 

@@ -1,11 +1,14 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { navigation, site } from "@/content/site";
+import { cn } from "@/lib/cn";
 import { Wordmark } from "./Wordmark";
+
+/** Keep in step with the transition durations in the markup below. */
+const EXIT_MS = 400;
 
 /**
  * Full-screen navigation for phones and tablets.
@@ -14,6 +17,12 @@ import { Wordmark } from "./Wordmark";
  * the links at display size, and reads as part of the design rather than as a
  * utility panel. Most visitors arrive here from Instagram on a phone, so this
  * is the primary navigation, not a fallback.
+ *
+ * The open and close transitions are CSS. An animation library would be the
+ * obvious way to handle the exit, but it is the only thing on the site that
+ * would need one, and loading it on every page to fade one panel is a poor
+ * trade for the visitor — so the panel stays mounted for the length of its own
+ * exit transition and then unmounts itself.
  */
 export function MobileMenu({
   open,
@@ -22,11 +31,43 @@ export function MobileMenu({
   open: boolean;
   onClose: () => void;
 }) {
-  const reduceMotion = useReducedMotion();
+  const [prevOpen, setPrevOpen] = useState(open);
+  const [closing, setClosing] = useState(false);
+  const [visible, setVisible] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Escape closes, and focus is kept inside the panel while it is open.
+  // React's sanctioned way to react to a prop change: adjust state during
+  // render rather than in an effect, which would cost an extra pass and make
+  // the panel flash at full opacity before transitioning out.
+  if (prevOpen !== open) {
+    setPrevOpen(open);
+    if (open) {
+      setClosing(false);
+    } else {
+      setClosing(true);
+      setVisible(false);
+    }
+  }
+
+  // Rendered while open, and while the closing transition is still running.
+  const mounted = open || closing;
+
+  // Mount at the closed state, let it paint, then transition in.
+  useEffect(() => {
+    if (!open) return;
+    const raf = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  // Unmount once the exit transition has finished.
+  useEffect(() => {
+    if (!closing) return;
+    const timer = setTimeout(() => setClosing(false), EXIT_MS);
+    return () => clearTimeout(timer);
+  }, [closing]);
+
+  // Escape closes, and focus stays inside the panel while it is open.
   useEffect(() => {
     if (!open) return;
 
@@ -39,7 +80,7 @@ export function MobileMenu({
       if (event.key !== "Tab" || !panelRef.current) return;
 
       const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled])',
+        "a[href], button:not([disabled])",
       );
       if (focusable.length === 0) return;
 
@@ -70,103 +111,99 @@ export function MobileMenu({
     };
   }, [open]);
 
-  const duration = reduceMotion ? 0 : 0.7;
+  if (!mounted) return null;
 
   return (
-    <AnimatePresence>
-      {open ? (
-        <motion.div
-          ref={panelRef}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site navigation"
-          className="fixed inset-0 z-[60] bg-ivory lg:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: duration * 0.5, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={panelRef}
+      id="mobile-navigation"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site navigation"
+      className={cn(
+        "fixed inset-0 z-[60] bg-ivory transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden",
+        visible ? "opacity-100" : "opacity-0",
+      )}
+    >
+      <div className="flex h-full flex-col">
+        <div className="flex items-center justify-between px-[clamp(1.25rem,5vw,5.5rem)] py-6">
+          <Link href="/" onClick={onClose} aria-label="MORE HAUS — home">
+            <Wordmark size="sm" />
+          </Link>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="label -mr-2 p-2 text-espresso"
+          >
+            Close
+          </button>
+        </div>
+
+        <nav
+          aria-label="Primary"
+          className="flex flex-1 flex-col justify-center px-[clamp(1.25rem,5vw,5.5rem)]"
         >
-          <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between px-[clamp(1.25rem,5vw,5.5rem)] py-6">
-              <Link href="/" onClick={onClose} aria-label="MORE HAUS — home">
-                <Wordmark size="sm" />
-              </Link>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                onClick={onClose}
-                className="label -mr-2 p-2 text-espresso"
+          <ul>
+            {navigation.map((item, index) => (
+              <li
+                key={item.href}
+                className={cn(
+                  "border-b border-espresso/10 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  visible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-3 opacity-0",
+                )}
+                // Links arrive one after another rather than all at once.
+                style={{ transitionDelay: visible ? `${80 + index * 50}ms` : "0ms" }}
               >
-                Close
-              </button>
-            </div>
-
-            <nav
-              aria-label="Primary"
-              className="flex flex-1 flex-col justify-center px-[clamp(1.25rem,5vw,5.5rem)]"
-            >
-              <ul>
-                {navigation.map((item, index) => (
-                  <motion.li
-                    key={item.href}
-                    initial={reduceMotion ? false : { opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration,
-                      delay: reduceMotion ? 0 : 0.08 + index * 0.05,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
-                    className="border-b border-espresso/10"
-                  >
-                    <Link
-                      href={item.href}
-                      onClick={onClose}
-                      className="display-sm block py-4 text-espresso"
-                    >
-                      {item.label}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-
-              <motion.div
-                initial={reduceMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration, delay: reduceMotion ? 0 : 0.45 }}
-                className="mt-10"
-              >
-                <Link href="/contact" onClick={onClose} className="btn btn-solid">
-                  Inquire
+                <Link
+                  href={item.href}
+                  onClick={onClose}
+                  className="display-sm block py-4 text-espresso"
+                >
+                  {item.label}
                 </Link>
-              </motion.div>
-            </nav>
+              </li>
+            ))}
+          </ul>
 
-            <div className="px-[clamp(1.25rem,5vw,5.5rem)] pb-10">
-              <p className="label text-smoke">{site.serviceArea}</p>
-              <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
-                {site.social.map((channel) => (
-                  <li key={channel.href}>
-                    <a
-                      href={channel.href}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="label text-espresso"
-                    >
-                      {channel.label}
-                    </a>
-                  </li>
-                ))}
-                <li>
-                  <a href={`mailto:${site.email}`} className="label text-espresso">
-                    Email
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <div
+            className={cn(
+              "mt-10 transition-opacity duration-500",
+              visible ? "opacity-100" : "opacity-0",
+            )}
+            style={{ transitionDelay: visible ? "450ms" : "0ms" }}
+          >
+            <Link href="/contact" onClick={onClose} className="btn btn-solid">
+              Inquire
+            </Link>
           </div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+        </nav>
+
+        <div className="px-[clamp(1.25rem,5vw,5.5rem)] pb-10">
+          <p className="label text-smoke">{site.serviceArea}</p>
+          <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+            {site.social.map((channel) => (
+              <li key={channel.href}>
+                <a
+                  href={channel.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="label text-espresso"
+                >
+                  {channel.label}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href={`mailto:${site.email}`} className="label text-espresso">
+                Email
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 }

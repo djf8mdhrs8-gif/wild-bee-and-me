@@ -157,6 +157,25 @@ its callback and would stay invisible. See `src/lib/useReveal.ts`.
 
 Easing is `cubic-bezier(0.22, 1, 0.36, 1)` everywhere.
 
+**No animation library ships.** The site started on Framer Motion, which is the
+obvious choice for this kind of work. Once the scroll reveal moved to CSS (for
+the jump-past bug described above), the only things left using it were one
+panel fade and one parallax drift — and it was still costing roughly 179 KB
+uncompressed on every page, about 49 KB over the wire. Both were
+straightforward to express directly:
+
+- **Reveals and the menu** are CSS transitions toggled by a class, so the
+  browser runs them on the compositor.
+- **Parallax** is one shared scroll listener writing a `transform` inside a
+  `requestAnimationFrame`, with elements far from the viewport skipped
+  (`src/lib/useParallax.ts`).
+
+Both hooks use a single listener for the whole page rather than one per
+element, and both detach when nothing is left to animate. If a future feature
+genuinely needs orchestration — shared layout transitions, gesture-driven
+motion, spring physics — add the library back; it is a better tool than hand-
+rolled code for those, and this site simply does not do them.
+
 **The hero entrance is CSS, not JavaScript**, deliberately: the headline is the
 largest-contentful paint and must not wait for hydration to become visible.
 

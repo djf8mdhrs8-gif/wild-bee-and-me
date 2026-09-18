@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useRef, type ReactNode } from "react";
+import type { ReactNode } from "react";
+
+import { useParallax } from "@/lib/useParallax";
 
 /**
  * Drifts its child vertically as the section passes through the viewport.
@@ -9,6 +10,9 @@ import { useRef, type ReactNode } from "react";
  * The child is deliberately rendered taller than its frame so the drift never
  * exposes an edge. Keep `strength` low — anything above about 12% stops reading
  * as depth and starts reading as a trick.
+ *
+ * Under `prefers-reduced-motion` nothing is registered and the child simply
+ * sits still.
  */
 export function Parallax({
   children,
@@ -20,32 +24,17 @@ export function Parallax({
   strength?: number;
   className?: string;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [`-${strength}%`, `${strength}%`],
-  );
-
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
+  const { containerRef, innerRef } = useParallax(strength);
 
   return (
-    <div ref={ref} className={className}>
-      <motion.div
-        style={{ y, height: `${100 + strength * 2}%`, top: `-${strength}%` }}
+    <div ref={containerRef} className={className}>
+      <div
+        ref={innerRef}
         className="absolute inset-x-0"
+        style={{ height: `${100 + strength * 2}%`, top: `-${strength}%` }}
       >
         {children}
-      </motion.div>
+      </div>
     </div>
   );
 }
