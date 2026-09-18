@@ -58,6 +58,22 @@ from this one file.
 The studio address also appears in `src/content/home-edit.ts` (the `studio`
 constant at the top).
 
+### Share cards
+
+Every project and every piece has its own card for when a link is posted to
+Instagram, Facebook or iMessage — the piece's name, price and availability, or
+the project's name and location, set in the brand faces on the espresso ground.
+They are generated, so a new piece gets one the moment it is added; there is
+nothing to design or upload.
+
+The two fonts they use live in `assets/` as TTFs. That is deliberate and they
+should not be deleted: the card renderer has no system fonts and cannot read
+the WOFF2 files the site itself uses, so without them the cards fall back to a
+generic sans.
+
+Once real photography exists you may prefer the actual photograph on the card.
+That is a change to the two `opengraph-image.tsx` files and nothing else.
+
 ### 3. Photography — `public/images/`
 
 Every image slot currently renders a captioned placeholder describing the
@@ -247,6 +263,7 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
   and a long but plausible message still gets through. A real person filling in
   the real form still succeeds, the honeypot never takes keyboard focus across
   45 tab presses, and it stays out of the accessibility tree.
+- All 17 share cards render, at 1200×630, in the brand faces.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.

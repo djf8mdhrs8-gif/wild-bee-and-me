@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 
+import { OG_SANS, OG_SERIF, ogFonts } from "@/lib/og-fonts";
 import { site } from "@/content/site";
 
 export const alt = `${site.name} — ${site.tagline}`;
@@ -23,7 +24,7 @@ export default function OpengraphImage() {
           backgroundColor: "#2B1717",
           padding: "72px",
           color: "#F2EFE6",
-          fontFamily: "Georgia, serif",
+          fontFamily: OG_SERIF,
         }}
       >
         <div
@@ -32,6 +33,7 @@ export default function OpengraphImage() {
             fontSize: 22,
             letterSpacing: 10,
             textTransform: "uppercase",
+            fontFamily: OG_SANS,
             color: "#B3BD83",
           }}
         >
@@ -54,6 +56,7 @@ export default function OpengraphImage() {
             fontSize: 24,
             letterSpacing: 12,
             textTransform: "uppercase",
+            fontFamily: OG_SANS,
           }}
         >
           <div style={{ display: "flex" }}>More Haus</div>
@@ -63,6 +66,6 @@ export default function OpengraphImage() {
         </div>
       </div>
     ),
-    size,
+    { ...size, fonts: ogFonts },
   );
 }
