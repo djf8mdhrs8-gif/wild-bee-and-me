@@ -46,10 +46,14 @@ export function CollectionBrowser({
           <div className="rail -mx-1 max-w-full gap-x-7 px-1">
             {filters.map((option) => {
               const active = option === filter;
-              const count =
-                option === "All"
-                  ? products.length
-                  : products.filter((p) => p.category === option).length;
+              // Counted through the same filter the grid uses. Counting the
+              // whole catalogue here meant a tab could read "Decor 1" with
+              // "Hide sold items" on and then show the empty state.
+              const count = products.filter(
+                (p) =>
+                  (option === "All" || p.category === option) &&
+                  !(hideSold && p.status === "Sold"),
+              ).length;
 
               return (
                 <button
@@ -93,6 +97,15 @@ export function CollectionBrowser({
       </div>
 
       <div className="wrap pt-[clamp(2.5rem,6vw,4rem)] pb-[clamp(6rem,14vw,12rem)]">
+        {/* Always rendered, so filtering is announced in both states. A region
+            that unmounts when the results empty announces nothing at the
+            moment there is most to say. */}
+        <p className="sr-only" role="status">
+          {visible.length === 0
+            ? "No pieces match these filters."
+            : `${visible.length} ${visible.length === 1 ? "piece" : "pieces"} shown.`}
+        </p>
+
         {visible.length === 0 ? (
           <div className="py-[clamp(3rem,8vw,6rem)]">
             <p className="display-sm max-w-[22ch]">
@@ -118,9 +131,7 @@ export function CollectionBrowser({
           </div>
         ) : (
           <>
-            <p className="sr-only" role="status">
-              {visible.length} pieces shown
-            </p>
+
             <div className="grid grid-cols-2 items-start gap-x-4 gap-y-[clamp(2.5rem,5vw,4rem)] sm:gap-x-8 md:grid-cols-3 lg:gap-x-10">
               {visible.map((product, index) => (
                 <ProductCard

@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
-import { ELAPSED_FIELD } from "@/lib/inquiry";
+import { ELAPSED_FIELD, HONEYPOT_FIELD } from "@/lib/inquiry";
 
 type State = "idle" | "submitting" | "done" | "error";
 
@@ -27,6 +27,8 @@ export function NewsletterForm({
 }) {
   const id = useId();
   const [email, setEmail] = useState("");
+  // Filled only by something that is not a person. See HONEYPOT_FIELD.
+  const [honeypot, setHoneypot] = useState("");
   // When this form reached the visitor. A submission arriving within a
   // couple of seconds of that did not involve anyone reading it. Set on
   // mount rather than during render: the clock is not pure, and the server
@@ -51,7 +53,12 @@ export function NewsletterForm({
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source, [ELAPSED_FIELD]: elapsedMs() }),
+        body: JSON.stringify({
+          email,
+          source,
+          [ELAPSED_FIELD]: elapsedMs(),
+          [HONEYPOT_FIELD]: honeypot,
+        }),
       });
       const result = (await response.json()) as { message?: string };
 
@@ -81,10 +88,32 @@ export function NewsletterForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className={cn("w-full", className)} noValidate>
+    <form onSubmit={onSubmit} className={cn("relative w-full", className)} noValidate>
       <label htmlFor={id} className={cn("label block", onDark ? "text-parchment" : "text-smoke")}>
         {label}
       </label>
+
+      {/* The same trap the inquiry form sets. Without it this endpoint had no
+          working signal at all: the timing field is optional by design, so a
+          bare POST went straight through to the mailing list. Out of the
+          accessibility tree and out of the tab order, but a real labelled
+          field in the markup, which is what makes it work. */}
+      <div
+        aria-hidden="true"
+        className="absolute h-px w-px overflow-hidden"
+        style={{ left: "-9999px", top: "auto" }}
+      >
+        <label htmlFor={`${id}-company`}>Company website</label>
+        <input
+          id={`${id}-company`}
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={honeypot}
+          onChange={(event) => setHoneypot(event.target.value)}
+        />
+      </div>
 
       <div
         className={cn(

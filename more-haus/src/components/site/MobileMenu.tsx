@@ -100,22 +100,32 @@ export function MobileMenu({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  // Hold the page still behind the menu, and hand focus back where it came
-  // from on the way out. Without the second part, closing with Escape drops
-  // focus onto <body> and a keyboard visitor restarts from the top of the page.
+  // Hold the page still for as long as the panel is on screen. Keyed on
+  // `mounted`, not `open`: the panel stays up for the length of its exit
+  // transition, and unlocking at `open` released the page ~400ms early, so it
+  // scrolled behind a menu that was still covering it.
+  useEffect(() => {
+    if (!mounted) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mounted]);
+
+  // Move focus into the panel on open and hand it back on the way out.
+  // Without the second half, closing with Escape drops focus onto <body> and a
+  // keyboard visitor restarts from the top of the page.
   useEffect(() => {
     if (!open) return;
 
-    const previousOverflow = document.body.style.overflow;
     const previouslyFocused = document.activeElement as HTMLElement | null;
     // Read the node now: by cleanup time the ref may already point elsewhere.
     const panel = panelRef.current;
 
-    document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
 
     return () => {
-      document.body.style.overflow = previousOverflow;
       // Only take focus back if it is still inside the closing panel —
       // clicking a link should leave focus wherever the new page puts it.
       if (panel?.contains(document.activeElement)) {

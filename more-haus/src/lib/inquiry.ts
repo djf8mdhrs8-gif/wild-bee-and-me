@@ -139,13 +139,20 @@ export function looksAutomated(raw: unknown): boolean {
   const honeypot = source[HONEYPOT_FIELD];
   if (typeof honeypot === "string" && honeypot.trim() !== "") return true;
 
-  const elapsed = Number(source[ELAPSED_FIELD]);
+  const elapsed = source[ELAPSED_FIELD];
 
-  // Absent or unreadable: let it through. The honeypot is the signal that
-  // carries this check; timing is corroboration. Someone whose JavaScript
-  // partly failed still deserves to reach the studio, and losing a real
-  // inquiry is far worse than passing a piece of spam to a human to delete.
-  if (!Number.isFinite(elapsed) || elapsed < 0) return false;
+  // Deliberately a type check rather than Number(). `Number(null)` and
+  // `Number("")` are both 0, which would read as an instant submission and
+  // silently bin a real inquiry — the exact failure this check was rewritten
+  // to remove. Anything that is not an actual number is treated as absent.
+  //
+  // Absent means let it through. The honeypot is the signal that carries this
+  // check; timing only corroborates it. Someone whose JavaScript partly failed
+  // still deserves to reach the studio, and losing a real inquiry is far worse
+  // than passing a piece of spam to a human to delete.
+  if (typeof elapsed !== "number" || !Number.isFinite(elapsed) || elapsed < 0) {
+    return false;
+  }
 
   return elapsed / 1000 < MIN_SECONDS_ON_FORM;
 }

@@ -113,7 +113,10 @@ export function Header() {
               type="button"
               onClick={() => setMenuOpen(true)}
               aria-expanded={menuOpen}
-              aria-controls="mobile-navigation"
+              // The panel is unmounted while closed, so pointing at its id
+              // then would reference an element that is not in the document.
+              // `aria-expanded` carries the state on its own.
+              aria-controls={menuOpen ? "mobile-navigation" : undefined}
               className="label -mr-2 flex items-center gap-2 p-2 lg:hidden"
             >
               Menu

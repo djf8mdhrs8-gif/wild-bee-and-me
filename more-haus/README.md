@@ -279,6 +279,13 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
 - A piece added with no photographs yet renders rather than breaking the build.
 - The calendar file carries a `VTIMEZONE`, as RFC 5545 requires alongside a
   named `TZID`.
+- Delivery end to end against a real webhook receiver: five shapes of genuine
+  inquiry all arrive, both newsletter signups arrive, and the instant and
+  honeypot submissions are withheld. This is the only way to tell "discarded"
+  from "no webhook configured" — both report `delivered: false`.
+- Category counts match what the grid shows once sold pieces are hidden.
+- The page stays locked while the mobile menu fades out, and scrolls again once
+  it has gone.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.
