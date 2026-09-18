@@ -323,10 +323,57 @@ photography or a live form endpoint.
 
 ## Deployment
 
-Any host that runs Next.js 16. On Vercel it is zero-config; set the two
-webhook variables in the project settings. Elsewhere, `npm run build` then
-`npm start` behind a reverse proxy.
+### Vercel, step by step
 
-Set `site.url` in `src/content/site.ts` to the live domain before deploying —
-canonical URLs, the sitemap, OpenGraph tags and the calendar links all derive
-from it.
+**The one setting that matters: Root Directory must be `more-haus`.** This app
+lives in a subfolder of the repository, so the default of "the repository root"
+will fail the build — Vercel would look at the Wild Bee & Me site instead.
+
+1. Sign in at [vercel.com](https://vercel.com) with the GitHub account that
+   owns the repository.
+2. **Add New → Project**, and import `wild-bee-and-me`.
+3. On the configure screen, find **Root Directory**, click Edit, and choose the
+   `more-haus` folder. Framework should then read "Next.js" on its own; leave
+   the build and output settings alone.
+4. Open **Environment Variables** and add the two that make the forms work:
+
+   | Name | Value |
+   | --- | --- |
+   | `RESEND_API_KEY` | your key from resend.com |
+   | `INQUIRY_TO_EMAIL` | the address the studio reads |
+
+   Add them for Production, Preview and Development so the forms work on
+   preview builds too.
+5. **Deploy.** First build takes a couple of minutes. You get a URL ending
+   `.vercel.app` immediately.
+
+### Which branch gets deployed
+
+Vercel builds your repository's **default branch** (`main`) as production, and
+gives every other branch its own preview URL.
+
+So you have two options:
+
+- **Merge the pull request first**, then deploy — production is the real site
+  from the start.
+- **Deploy before merging** and use the preview URL for the branch to look at
+  it on real devices. Merging later promotes it to production automatically.
+
+### After the first deploy
+
+1. Put the real domain in `src/content/site.ts` — `site.url`. Canonical URLs,
+   the sitemap, the share cards and the calendar links all derive from it, so
+   they are wrong until you do.
+2. Add the domain in Vercel under **Settings → Domains**, and point your DNS
+   where it tells you.
+3. Verify that same domain in Resend, then set `INQUIRY_FROM_EMAIL` to
+   `MORE HAUS <studio@yourdomain.com>` so inquiries come from you rather than
+   Resend's shared address.
+4. Send yourself a test inquiry through the live contact form and confirm it
+   arrives.
+
+### Anywhere else
+
+Any host that runs Next.js 16: `npm ci`, `npm run build`, `npm start` behind a
+reverse proxy, with the same environment variables set. A clean clone of this
+repository builds with no extra setup.
