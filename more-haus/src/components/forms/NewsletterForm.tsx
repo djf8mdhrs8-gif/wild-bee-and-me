@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
 
@@ -26,6 +26,14 @@ export function NewsletterForm({
 }) {
   const id = useId();
   const [email, setEmail] = useState("");
+  // When this form reached the visitor. A submission arriving within a
+  // couple of seconds of that did not involve anyone reading it. Set on
+  // mount rather than during render: the clock is not pure, and the server
+  // and the browser would disagree about it.
+  const startedAt = useRef<number | null>(null);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
   const [state, setState] = useState<State>("idle");
   const [message, setMessage] = useState("");
 
@@ -38,7 +46,7 @@ export function NewsletterForm({
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source }),
+        body: JSON.stringify({ email, source, startedAt: startedAt.current ?? undefined }),
       });
       const result = (await response.json()) as { message?: string };
 

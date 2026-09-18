@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { looksAutomated } from "@/lib/inquiry";
+
 /**
  * Newsletter signups.
  *
@@ -16,10 +18,14 @@ import { NextResponse } from "next/server";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function POST(request: Request) {
-  let payload: { email?: string; source?: string };
+  let payload: { email?: string; source?: string; startedAt?: number };
 
   try {
-    payload = (await request.json()) as { email?: string; source?: string };
+    payload = (await request.json()) as {
+      email?: string;
+      source?: string;
+      startedAt?: number;
+    };
   } catch {
     return NextResponse.json(
       { message: "That request could not be read." },
@@ -27,7 +33,13 @@ export async function POST(request: Request) {
     );
   }
 
-  const email = payload.email?.trim() ?? "";
+  // Same silent treatment as the inquiry form.
+  if (looksAutomated(payload)) {
+    return NextResponse.json({ message: "You are on the list.", delivered: false });
+  }
+
+  // 254 is the maximum length of an email address; anything longer is not one.
+  const email = (payload.email ?? "").trim().slice(0, 254);
 
   if (!EMAIL.test(email)) {
     return NextResponse.json(
@@ -56,7 +68,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         type: "newsletter",
         email,
-        source: payload.source ?? "unknown",
+        source: String(payload.source ?? "unknown").slice(0, 60),
         receivedAt: new Date().toISOString(),
       }),
     });

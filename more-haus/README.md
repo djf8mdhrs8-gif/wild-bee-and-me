@@ -106,6 +106,23 @@ Postmark), an automation hook (Zapier, Make), a mailing list provider
 (Flodesk, Mailchimp, Klaviyo) or a CRM. The API responses include
 `delivered: true | false` so a misconfiguration is visible rather than silent.
 
+**Both endpoints turn away automated submissions before anything is
+forwarded**, which matters because a public contact form collects spam from the
+day it goes live:
+
+- A **honeypot field** no person can see or tab to. Anything that fills it in
+  is not a person.
+- A **timing check** — a submission arriving within three seconds of the form
+  loading did not involve reading it.
+- Only the **fields the form defines** are relayed onward, each capped in
+  length, and a body over 16 KB is refused outright. Nothing unexpected reaches
+  whatever service is on the other end of the webhook.
+
+Automated submissions get exactly the same reply as a real one and are simply
+not forwarded — telling a spammer why it failed only tells them what to change.
+If you ever wonder why a submission did not arrive, `delivered: false` in the
+server log is the thing to look for.
+
 ### 5. Replace the placeholder copy
 
 Written in the MORE HAUS voice and shaped correctly — right length, right
@@ -225,6 +242,11 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
   backslashes, an em-dash and a description long enough to need folding —
   through a conforming unfold-and-unescape, with every line inside the 75-octet
   limit RFC 5545 sets.
+- Form abuse handling: honeypot and instant submissions are accepted politely
+  and not forwarded, unknown fields are dropped, an oversized body is refused,
+  and a long but plausible message still gets through. A real person filling in
+  the real form still succeeds, the honeypot never takes keyboard focus across
+  45 tab presses, and it stays out of the accessibility tree.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.

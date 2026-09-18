@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 
-import { validateInquiry, type InquiryPayload } from "@/lib/inquiry";
+import {
+  looksAutomated,
+  MAX_BODY_BYTES,
+  sanitiseInquiry,
+  validateInquiry,
+} from "@/lib/inquiry";
 
 /**
  * Receives a design inquiry.
@@ -16,17 +21,48 @@ import { validateInquiry, type InquiryPayload } from "@/lib/inquiry";
  * │  enquiry would be recorded and never reach anyone.                       │
  * └──────────────────────────────────────────────────────────────────────────┘
  */
-export async function POST(request: Request) {
-  let payload: Partial<InquiryPayload>;
+/** Answered for real submissions and for automated ones alike. */
+const ACCEPTED = "Thank you — your note is with the studio.";
 
+export async function POST(request: Request) {
+  // Read as text first so an enormous body is turned away before it is parsed
+  // and before any of it is relayed to the webhook.
+  let body: string;
   try {
-    payload = (await request.json()) as Partial<InquiryPayload>;
+    body = await request.text();
   } catch {
     return NextResponse.json(
       { message: "That request could not be read." },
       { status: 400 },
     );
   }
+
+  if (new TextEncoder().encode(body).length > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { message: "That message is longer than this form can take." },
+      { status: 413 },
+    );
+  }
+
+  let raw: unknown;
+  try {
+    raw = JSON.parse(body);
+  } catch {
+    return NextResponse.json(
+      { message: "That request could not be read." },
+      { status: 400 },
+    );
+  }
+
+  // Answer an automated submission exactly as a real one, and forward nothing.
+  // Saying "you look like a bot" only tells a spammer what to change.
+  if (looksAutomated(raw)) {
+    return NextResponse.json({ message: ACCEPTED, delivered: false });
+  }
+
+  // Rebuild the payload from known fields only, so nothing unexpected is
+  // relayed to whatever service receives the webhook.
+  const payload = sanitiseInquiry(raw);
 
   const errors = validateInquiry(payload);
   if (Object.keys(errors).length > 0) {
@@ -43,10 +79,7 @@ export async function POST(request: Request) {
       "[inquiry] INQUIRY_WEBHOOK_URL is not set — this inquiry was logged and NOT delivered.",
       { ...payload, receivedAt: new Date().toISOString() },
     );
-    return NextResponse.json({
-      message: "Thank you — your note is with the studio.",
-      delivered: false,
-    });
+    return NextResponse.json({ message: ACCEPTED, delivered: false });
   }
 
   try {
@@ -72,8 +105,5 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({
-    message: "Thank you — your note is with the studio.",
-    delivered: true,
-  });
+  return NextResponse.json({ message: ACCEPTED, delivered: true });
 }

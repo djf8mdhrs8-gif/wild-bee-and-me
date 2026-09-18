@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Field } from "@/components/ui/Field";
 import {
   BUDGETS,
+  HONEYPOT_FIELD,
   INQUIRY_SUBJECTS,
   PROJECT_TYPES,
   TIMELINES,
@@ -32,6 +33,14 @@ export function InquiryForm({
 }) {
   const [subject, setSubject] = useState(defaultSubject);
   const [errors, setErrors] = useState<FieldErrors>({});
+  // When this form reached the visitor. A submission arriving within a
+  // couple of seconds of that did not involve anyone reading it. Set on
+  // mount rather than during render: the clock is not pure, and the server
+  // and the browser would disagree about it.
+  const startedAt = useRef<number | null>(null);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
   const [state, setState] = useState<State>("idle");
   const [notice, setNotice] = useState("");
 
@@ -44,6 +53,8 @@ export function InquiryForm({
     const form = new FormData(event.currentTarget);
     const payload = Object.fromEntries(form.entries()) as unknown as InquiryPayload;
 
+    // Validate only the fields a person fills in; the spam signals travel
+    // alongside and are the server's business.
     const found = validateInquiry(payload);
     setErrors(found);
 
@@ -63,7 +74,7 @@ export function InquiryForm({
       const response = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, startedAt: startedAt.current ?? undefined }),
       });
       const result = (await response.json()) as {
         message?: string;
@@ -98,8 +109,30 @@ export function InquiryForm({
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate>
+    <form onSubmit={onSubmit} noValidate className="relative">
       {piece ? <input type="hidden" name="piece" value={piece} /> : null}
+
+      {/* Left for automated submitters to find. It is removed from the
+          accessibility tree and from the tab order, so nobody using a screen
+          reader or a keyboard will ever meet it — but it is a real, labelled
+          field in the markup, which is what makes it work. It is positioned
+          off-screen rather than set to display:none, which some submitters
+          know to skip. */}
+      <div
+        aria-hidden="true"
+        className="absolute h-px w-px overflow-hidden"
+        style={{ left: "-9999px", top: "auto" }}
+      >
+        <label htmlFor={HONEYPOT_FIELD}>Company website</label>
+        <input
+          id={HONEYPOT_FIELD}
+          name={HONEYPOT_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
+      </div>
 
       <fieldset className="border-0 p-0">
         <legend className="label text-smoke">I am writing about</legend>
