@@ -218,6 +218,13 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
   button.
 - The mobile menu opens, staggers, traps focus, reopens correctly after
   closing, and unmounts only once its exit transition has finished.
+- Structured data is escaped before it reaches the page, so content containing
+  `</script>` cannot break out of the tag. Confirmed by putting a payload in an
+  event description and checking it no longer executes.
+- The calendar file round-trips a torture string — semicolons, commas,
+  backslashes, an em-dash and a description long enough to need folding —
+  through a conforming unfold-and-unescape, with every line inside the 75-octet
+  limit RFC 5545 sets.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.

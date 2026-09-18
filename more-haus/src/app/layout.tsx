@@ -6,7 +6,7 @@ import "./globals.css";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { site } from "@/content/site";
-import { studioSchema } from "@/lib/schema";
+import { serialiseJsonLd, studioSchema } from "@/lib/schema";
 
 /** Display serif — headlines, statements and the occasional italic aside. */
 const instrumentSerif = Instrument_Serif({
@@ -91,7 +91,7 @@ export default function RootLayout({
         <Footer />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(studioSchema()) }}
+          dangerouslySetInnerHTML={{ __html: serialiseJsonLd(studioSchema()) }}
         />
       </body>
     </html>

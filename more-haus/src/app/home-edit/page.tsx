@@ -21,7 +21,7 @@ import {
   formatEventYear,
   formatTimeRange,
 } from "@/lib/date";
-import { homeEditSchema } from "@/lib/schema";
+import { homeEditSchema, serialiseJsonLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "The Home Edit",
@@ -51,7 +51,7 @@ export default function HomeEditPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(homeEditSchema(next)),
+            __html: serialiseJsonLd(homeEditSchema(next)),
           }}
         />
       ) : null}

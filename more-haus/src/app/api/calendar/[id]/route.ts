@@ -18,10 +18,15 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
+  // The id comes from a content file rather than the request, but it still
+  // ends up in a response header, so keep it to characters that cannot break
+  // out of one.
+  const safeId = event.id.replace(/[^A-Za-z0-9._-]/g, "");
+
   return new Response(buildICS(event), {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `attachment; filename="more-haus-${event.id}.ics"`,
+      "Content-Disposition": `attachment; filename="more-haus-${safeId}.ics"`,
       "Cache-Control": "public, max-age=3600",
     },
   });
