@@ -100,14 +100,27 @@ export function MobileMenu({
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  // Hold the page still behind the menu.
+  // Hold the page still behind the menu, and hand focus back where it came
+  // from on the way out. Without the second part, closing with Escape drops
+  // focus onto <body> and a keyboard visitor restarts from the top of the page.
   useEffect(() => {
     if (!open) return;
-    const previous = document.body.style.overflow;
+
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    // Read the node now: by cleanup time the ref may already point elsewhere.
+    const panel = panelRef.current;
+
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
+
     return () => {
-      document.body.style.overflow = previous;
+      document.body.style.overflow = previousOverflow;
+      // Only take focus back if it is still inside the closing panel —
+      // clicking a link should leave focus wherever the new page puts it.
+      if (panel?.contains(document.activeElement)) {
+        previouslyFocused?.focus();
+      }
     };
   }, [open]);
 

@@ -102,8 +102,12 @@ function byDateAscending(a: HomeEditEvent, b: HomeEditEvent) {
  */
 export function getUpcomingEdits(limit?: number): HomeEditEvent[] {
   const today = todayInEastern();
+  // `cancelled` has to be excluded explicitly. Without it a cancelled edit
+  // still in the future was headlined as "the next edit", complete with
+  // directions, a calendar download and an EventScheduled listing for search
+  // engines — sending people to a market that is not happening.
   const upcoming = homeEditEvents
-    .filter((event) => event.status !== "past" && event.date >= today)
+    .filter((event) => event.status === "scheduled" && event.date >= today)
     .sort(byDateAscending);
   return typeof limit === "number" ? upcoming.slice(0, limit) : upcoming;
 }
@@ -121,8 +125,14 @@ export function getFollowingEdits(limit = 3): HomeEditEvent[] {
 /** Past edits, most recent first — the archive. */
 export function getPastEdits(limit?: number): HomeEditEvent[] {
   const today = todayInEastern();
+  // A cancelled edit never happened, so it does not belong in the archive
+  // either. Marking one `cancelled` removes it from the site entirely.
   const past = homeEditEvents
-    .filter((event) => event.status === "past" || event.date < today)
+    .filter(
+      (event) =>
+        event.status !== "cancelled" &&
+        (event.status === "past" || event.date < today),
+    )
     .sort((a, b) => b.date.localeCompare(a.date));
   return typeof limit === "number" ? past.slice(0, limit) : past;
 }

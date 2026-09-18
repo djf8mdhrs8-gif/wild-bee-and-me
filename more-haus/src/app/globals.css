@@ -337,7 +337,11 @@
   }
 
   .field-input:focus {
-    outline: none;
+    /* No `outline: none` here. This rule lives in @layer components, which
+       outranks the :focus-visible ring in @layer base, so suppressing the
+       outline here removed the focus indicator from every input, select and
+       textarea on the site. The darkened rule below is an addition to that
+       indicator, not a replacement for it. */
     border-bottom-color: var(--color-espresso);
   }
 
@@ -360,7 +364,11 @@
      run it on the compositor. `prefers-reduced-motion` neutralises both the
      transition and the offset at the bottom of this file. */
 
-  .motion-reveal {
+  /* Scoped to `html.js`, set by an inline script in the root layout before
+     first paint. Without that guard a visitor with JavaScript disabled gets a
+     blank page: every one of these blocks starts at opacity 0 and only the
+     hook can clear it. */
+  .js .motion-reveal {
     opacity: 0;
     transform: translate3d(0, var(--reveal-distance, 28px), 0);
     transition:
@@ -369,7 +377,7 @@
     will-change: opacity, transform;
   }
 
-  .motion-reveal.is-shown {
+  .js .motion-reveal.is-shown {
     opacity: 1;
     transform: translate3d(0, 0, 0);
     will-change: auto;

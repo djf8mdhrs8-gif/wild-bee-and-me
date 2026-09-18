@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
 import { navigation, site } from "@/content/site";
+import { CopyrightYear } from "./CopyrightYear";
 import { Wordmark } from "./Wordmark";
 
 /**
@@ -9,7 +10,9 @@ import { Wordmark } from "./Wordmark";
  * wide spacing, and a single hairline dividing the two halves.
  */
 export function Footer() {
-  const year = new Date().getFullYear();
+  // Baked at build time on static routes; CopyrightYear corrects it in the
+  // browser if the year has turned since.
+  const buildYear = new Date().getFullYear();
 
   return (
     <footer className="grain relative bg-espresso text-ivory">
@@ -78,7 +81,8 @@ export function Footer() {
 
             <div className="flex items-end md:col-span-5 md:col-start-8">
               <p className="label-sm text-parchment/50">
-                &copy; {year} {site.name}. All rights reserved.
+                &copy; <CopyrightYear buildYear={buildYear} /> {site.name}. All rights
+                reserved.
               </p>
             </div>
           </div>

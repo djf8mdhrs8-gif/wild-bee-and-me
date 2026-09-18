@@ -29,6 +29,15 @@ export function ProductCard({
   className?: string;
 }) {
   const sold = product.status === "Sold";
+
+  // A piece added without photographs yet is a normal thing for a non-developer
+  // to do, and it must not take the whole page down. ProductGallery already
+  // guards this; the card did not.
+  const cover = product.images[0] ?? {
+    src: null,
+    alt: product.title,
+    note: `${product.title} — photograph to come`,
+  };
   const marker =
     product.status === "Available" ? null : product.status.toUpperCase();
 
@@ -40,7 +49,7 @@ export function ProductCard({
               beneath the frame, and a caption would collide with the status
               marker in the same corner. */}
           <EditorialImage
-            media={product.images[0]}
+            media={cover}
             sizes={sizes}
             zoom
             showCaption={false}

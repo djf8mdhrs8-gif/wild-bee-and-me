@@ -164,6 +164,13 @@ Art, Outdoor. Set `featured: true` to put it on the homepage rail.
 
 Prices are whole dollars (`2400`), or `null` for "price on request".
 
+### Cancel a Home Edit
+
+Change its `status` to `"cancelled"`. It disappears from the site completely —
+it will not be headlined, listed, offered as a calendar download, or filed in
+the archive afterwards. Leave the entry in the file; it is the record of what
+was planned.
+
 ### Mark something sold
 
 Change `status` to `"Sold"`.
@@ -264,6 +271,14 @@ Verified in a real browser against a production build, at 1440px, 834px and 390p
   the real form still succeeds, the honeypot never takes keyboard focus across
   45 tab presses, and it stays out of the accessibility tree.
 - All 17 share cards render, at 1200×630, in the brand faces.
+- A visible focus ring on every input, textarea and select.
+- With JavaScript disabled, every page renders its content in full.
+- Closing the mobile menu returns focus to the button that opened it.
+- A cancelled Home Edit disappears from the site: the next edit rolls forward,
+  the calendar link goes, and the search-engine listing follows.
+- A piece added with no photographs yet renders rather than breaking the build.
+- The calendar file carries a `VTIMEZONE`, as RFC 5545 requires alongside a
+  named `TZID`.
 - Tablet has its own layout tier rather than the phone stack: at 834px the
   projects index is 2618px tall rather than 5896px, and the collection is
   three across.

@@ -27,6 +27,7 @@ export function buildICS(event: HomeEditEvent): string {
     "PRODID:-//MORE HAUS//The Home Edit//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
+    ...EASTERN_VTIMEZONE,
     "BEGIN:VEVENT",
     `UID:${event.id}@morehaus`,
     // DTSTAMP is when this file was produced, in UTC — not when the event
@@ -47,6 +48,38 @@ export function buildICS(event: HomeEditEvent): string {
   // RFC 5545 wants CRLF line endings, and content lines folded at 75 octets.
   return lines.map(foldLine).join("\r\n");
 }
+
+/**
+ * The definition of the timezone the events are quoted in.
+ *
+ * `DTSTART;TZID=America/New_York` names a timezone, and RFC 5545 requires the
+ * file to then say what that name means — a reader is not obliged to know, and
+ * the strict Outlook and Exchange paths this file exists for are exactly the
+ * ones that do not guess. Without it an event can land an hour out, or be
+ * refused outright.
+ *
+ * These are the current US rules: daylight time from the second Sunday in
+ * March, standard time from the first Sunday in November.
+ */
+const EASTERN_VTIMEZONE = [
+  "BEGIN:VTIMEZONE",
+  `TZID=${EVENT_TIME_ZONE}`.replace("TZID=", "TZID:"),
+  "BEGIN:DAYLIGHT",
+  "TZOFFSETFROM:-0500",
+  "TZOFFSETTO:-0400",
+  "TZNAME:EDT",
+  "DTSTART:19700308T020000",
+  "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
+  "END:DAYLIGHT",
+  "BEGIN:STANDARD",
+  "TZOFFSETFROM:-0400",
+  "TZOFFSETTO:-0500",
+  "TZNAME:EST",
+  "DTSTART:19701101T020000",
+  "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
+  "END:STANDARD",
+  "END:VTIMEZONE",
+];
 
 /**
  * Escapes the characters that are structural inside an ICS property value.

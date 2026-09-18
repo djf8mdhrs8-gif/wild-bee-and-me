@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/lib/cn";
+import { ELAPSED_FIELD } from "@/lib/inquiry";
 
 type State = "idle" | "submitting" | "done" | "error";
 
@@ -34,6 +35,10 @@ export function NewsletterForm({
   useEffect(() => {
     startedAt.current = Date.now();
   }, []);
+
+  /** How long this form has been open, measured on this device alone. */
+  const elapsedMs = () =>
+    startedAt.current === null ? undefined : Date.now() - startedAt.current;
   const [state, setState] = useState<State>("idle");
   const [message, setMessage] = useState("");
 
@@ -46,7 +51,7 @@ export function NewsletterForm({
       const response = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source, startedAt: startedAt.current ?? undefined }),
+        body: JSON.stringify({ email, source, [ELAPSED_FIELD]: elapsedMs() }),
       });
       const result = (await response.json()) as { message?: string };
 

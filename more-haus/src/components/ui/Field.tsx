@@ -33,6 +33,10 @@ export function Field({
         ) : null}
       </label>
 
+      {/* The control is passed in as children, so this component cannot wire
+          `aria-describedby` itself — the caller must point the control at
+          `<id>-hint` (and at `<id>-error` when there is an error) for the hint
+          to be announced. */}
       <div className="mt-2">{children}</div>
 
       {hint && !error ? (

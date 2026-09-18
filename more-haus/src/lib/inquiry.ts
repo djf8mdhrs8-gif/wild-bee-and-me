@@ -68,6 +68,17 @@ export const HONEYPOT_FIELD = "company_website";
 export const MIN_SECONDS_ON_FORM = 3;
 
 /**
+ * The field carrying how long the visitor had the form open, in milliseconds.
+ *
+ * It is an elapsed duration measured entirely on the visitor's own device, not
+ * a timestamp compared against the server's clock. That distinction matters: a
+ * device clock even a few seconds fast would make every genuine submission
+ * look instant, and they would be silently dropped while the form said they
+ * had been sent. Measuring a difference cancels any skew out.
+ */
+export const ELAPSED_FIELD = "elapsedMs";
+
+/**
  * Upper bounds for each field. These are generous for a real inquiry and stop
  * the endpoint from relaying something enormous to whatever service is on the
  * other end of the webhook.
@@ -120,7 +131,7 @@ export function sanitiseInquiry(raw: unknown): Partial<InquiryPayload> {
  * should answer exactly as it would for a real submission, so an automated
  * submitter learns nothing about why nothing happened.
  */
-export function looksAutomated(raw: unknown, now = Date.now()): boolean {
+export function looksAutomated(raw: unknown): boolean {
   if (typeof raw !== "object" || raw === null) return true;
 
   const source = raw as Record<string, unknown>;
@@ -128,9 +139,15 @@ export function looksAutomated(raw: unknown, now = Date.now()): boolean {
   const honeypot = source[HONEYPOT_FIELD];
   if (typeof honeypot === "string" && honeypot.trim() !== "") return true;
 
-  const startedAt = Number(source.startedAt);
-  if (!Number.isFinite(startedAt)) return false; // absent: give the benefit of the doubt
-  return (now - startedAt) / 1000 < MIN_SECONDS_ON_FORM;
+  const elapsed = Number(source[ELAPSED_FIELD]);
+
+  // Absent or unreadable: let it through. The honeypot is the signal that
+  // carries this check; timing is corroboration. Someone whose JavaScript
+  // partly failed still deserves to reach the studio, and losing a real
+  // inquiry is far worse than passing a piece of spam to a human to delete.
+  if (!Number.isFinite(elapsed) || elapsed < 0) return false;
+
+  return elapsed / 1000 < MIN_SECONDS_ON_FORM;
 }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;

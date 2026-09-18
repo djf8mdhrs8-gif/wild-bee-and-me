@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Field } from "@/components/ui/Field";
 import {
   BUDGETS,
+  ELAPSED_FIELD,
   HONEYPOT_FIELD,
   INQUIRY_SUBJECTS,
   PROJECT_TYPES,
@@ -41,6 +42,10 @@ export function InquiryForm({
   useEffect(() => {
     startedAt.current = Date.now();
   }, []);
+
+  /** How long this form has been open, measured on this device alone. */
+  const elapsedMs = () =>
+    startedAt.current === null ? undefined : Date.now() - startedAt.current;
   const [state, setState] = useState<State>("idle");
   const [notice, setNotice] = useState("");
 
@@ -74,7 +79,7 @@ export function InquiryForm({
       const response = await fetch("/api/inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, startedAt: startedAt.current ?? undefined }),
+        body: JSON.stringify({ ...payload, [ELAPSED_FIELD]: elapsedMs() }),
       });
       const result = (await response.json()) as {
         message?: string;
@@ -233,6 +238,7 @@ export function InquiryForm({
                 name="squareFootage"
                 type="text"
                 inputMode="numeric"
+                aria-describedby="squareFootage-hint"
                 className="field-input"
               />
             </Field>
@@ -253,7 +259,13 @@ export function InquiryForm({
               label="Estimated design + furnishing budget"
               hint="Helps us scope honestly. Nothing is held to it."
             >
-              <select id="budget" name="budget" className="field-input" defaultValue="">
+              <select
+                id="budget"
+                name="budget"
+                aria-describedby="budget-hint"
+                className="field-input"
+                defaultValue=""
+              >
                 <option value="">Select</option>
                 {BUDGETS.map((option) => (
                   <option key={option} value={option}>

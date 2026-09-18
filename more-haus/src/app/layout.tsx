@@ -86,6 +86,16 @@ export default function RootLayout({
       className={`${instrumentSerif.variable} ${jost.variable}`}
     >
       <body>
+        {/* Marks the document as scripted before anything paints. The scroll
+            reveals start at opacity 0 and are cleared by JavaScript, so
+            without this a visitor with JavaScript disabled would be served a
+            page whose content is entirely invisible. Inline and synchronous
+            on purpose: it has to win the race with first paint. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js')`,
+          }}
+        />
         <Header />
         <main id="main">{children}</main>
         <Footer />

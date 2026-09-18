@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { looksAutomated } from "@/lib/inquiry";
+import { looksAutomated, MAX_BODY_BYTES } from "@/lib/inquiry";
 
 /**
  * Newsletter signups.
@@ -18,14 +18,29 @@ import { looksAutomated } from "@/lib/inquiry";
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function POST(request: Request) {
-  let payload: { email?: string; source?: string; startedAt?: number };
+  // Same guard as the inquiry route: an email address is never large, so an
+  // oversized body is turned away before it is parsed.
+  let body: string;
+  try {
+    body = await request.text();
+  } catch {
+    return NextResponse.json(
+      { message: "That request could not be read." },
+      { status: 400 },
+    );
+  }
+
+  if (new TextEncoder().encode(body).length > MAX_BODY_BYTES) {
+    return NextResponse.json(
+      { message: "That request is larger than this form accepts." },
+      { status: 413 },
+    );
+  }
+
+  let payload: { email?: string; source?: string };
 
   try {
-    payload = (await request.json()) as {
-      email?: string;
-      source?: string;
-      startedAt?: number;
-    };
+    payload = JSON.parse(body) as { email?: string; source?: string };
   } catch {
     return NextResponse.json(
       { message: "That request could not be read." },
